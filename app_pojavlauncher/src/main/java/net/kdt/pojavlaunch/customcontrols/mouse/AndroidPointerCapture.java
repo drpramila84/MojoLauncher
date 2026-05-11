@@ -47,12 +47,18 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
     }
 
     private void accumulateHistoricalValues(MotionEvent motionEvent, int axisX, int axisY) {
+        // Start with the current event's value.
         float relX = motionEvent.getAxisValue(axisX),
                 relY = motionEvent.getAxisValue(axisY);
 
-        if(motionEvent.getHistorySize() > 1) for(int i = 0; i < motionEvent.getHistorySize(); i++) {
-            relX += motionEvent.getHistoricalAxisValue(axisX, i);
-            relY += motionEvent.getHistoricalAxisValue(axisY, i);
+        // Accumulate ALL historical deltas (was "> 1", missing single-event history — fixed to "> 0").
+        // Each historical entry is an independent delta for relative axes, so summing gives
+        // the correct total displacement for the whole batch, producing smoother motion.
+        if(motionEvent.getHistorySize() > 0) {
+            for(int i = 0; i < motionEvent.getHistorySize(); i++) {
+                relX += motionEvent.getHistoricalAxisValue(axisX, i);
+                relY += motionEvent.getHistoricalAxisValue(axisY, i);
+            }
         }
 
         mVector[0] = relX;

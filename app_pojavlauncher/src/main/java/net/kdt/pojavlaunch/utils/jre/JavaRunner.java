@@ -121,7 +121,15 @@ public class JavaRunner {
                 "-Dfml.earlyprogresswindow=false", //Forge 1.14+ workaround
                 "-Dloader.disable_forked_guis=true",
                 "-Dsodium.checks.issue2561=false",
-                "-Djdk.lang.Process.launchMechanism=FORK" // Default is POSIX_SPAWN which requires starting jspawnhelper, which doesn't work on Android
+                "-Djdk.lang.Process.launchMechanism=FORK", // Default is POSIX_SPAWN which requires starting jspawnhelper, which doesn't work on Android
+
+                // --- Smoothness / GC tuning ---
+                // Keep individual GC pauses short to reduce in-game stutter (especially on servers).
+                // Users can override any of these by adding the same flag in the JVM args settings.
+                "-XX:MaxGCPauseMillis=50",       // Target: pause at most 50 ms per GC cycle
+                "-XX:G1HeapRegionSize=32m",       // Larger regions → fewer, shorter collections
+                "-XX:G1NewSizePercent=20",        // Sufficient young-gen to absorb Minecraft's object churn
+                "-XX:G1ReservePercent=20"         // Emergency reserve so G1 isn't caught off-guard
         ));
         List<String> additionalArguments = new ArrayList<>();
         for(String arg : overridableArguments) {
@@ -141,6 +149,20 @@ public class JavaRunner {
 
         //Add all the arguments
         userArguments.addAll(additionalArguments);
+
+        // Boolean GC flags (no '=' sign, so they can't go in overridableArguments above).
+        // Added only if the user hasn't already specified them.
+        String[] gcBoolFlags = {
+                "-XX:+UseG1GC",            // G1 is the best GC for Minecraft's mixed allocation pattern
+                "-XX:+ParallelRefProcEnabled", // Process references in parallel → shorter GC pauses
+                "-XX:+DisableExplicitGC"   // Ignore System.gc() calls from mods/Minecraft (prevents stutter spikes)
+        };
+        for (String flag : gcBoolFlags) {
+            if (!userArguments.contains(flag)) {
+                userArguments.add(flag);
+            }
+        }
+
         return userArguments;
     }
 
