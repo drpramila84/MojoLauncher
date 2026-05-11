@@ -71,6 +71,7 @@ public class LauncherPreferences {
     public static boolean PREF_RAPID_START = true;
     public static boolean PREF_VERIFY_FILES = true;
     public static boolean PREF_PC_CONTROL = false;
+    public static float PREF_PC_MOUSE_SENSITIVITY = 1.0f;
 
 
     public static void loadPreferences(Context ctx) {
@@ -115,6 +116,7 @@ public class LauncherPreferences {
         PREF_VERIFY_FILES = DEFAULT_PREF.getBoolean("checkGameFiles", true);
         PREF_RAPID_START = DEFAULT_PREF.getBoolean("fastStartupCheck", true);
         PREF_PC_CONTROL = DEFAULT_PREF.getBoolean("pcControl", false);
+        PREF_PC_MOUSE_SENSITIVITY = DEFAULT_PREF.getInt("pcMouseSensitivity", 100) / 100f;
 
         String argLwjglLibname = "-Dorg.lwjgl.opengl.libname=";
         for (String arg : JREUtils.parseJavaArguments(PREF_CUSTOM_JAVA_ARGS)) {

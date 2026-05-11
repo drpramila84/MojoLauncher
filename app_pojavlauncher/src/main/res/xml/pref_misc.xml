@@ -45,6 +45,17 @@
             android:key="pcControl"
             android:summary="@string/preference_pc_control_description"
             android:title="@string/preference_pc_control_title" />
+
+        <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
+            android:key="pcMouseSensitivity"
+            android:title="@string/preference_pc_mouse_sensitivity_title"
+            android:summary="@string/preference_pc_mouse_sensitivity_description"
+            android:defaultValue="100"
+            app2:min="@integer/mouse_speed_seekbar_min"
+            android:max="@integer/mouse_speed_seekbar_max"
+            app2:seekBarIncrement="@integer/mouse_speed_seekbar_increment"
+            app2:showSeekBarValue="true"
+            app2:selectable="false" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preference_category_backup">

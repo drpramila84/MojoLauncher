@@ -96,8 +96,11 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
             }
         } else {
             // Position is updated by many events, hence it is send regardless of the event value
-            CallbackBridge.mouseX += (mVector[0] * LauncherPreferences.PREF_SCALE_FACTOR);
-            CallbackBridge.mouseY += (mVector[1] * LauncherPreferences.PREF_SCALE_FACTOR);
+            float sensitivityMultiplier = LauncherPreferences.PREF_PC_CONTROL
+                    ? LauncherPreferences.PREF_PC_MOUSE_SENSITIVITY
+                    : 1.0f;
+            CallbackBridge.mouseX += (mVector[0] * LauncherPreferences.PREF_SCALE_FACTOR * sensitivityMultiplier);
+            CallbackBridge.mouseY += (mVector[1] * LauncherPreferences.PREF_SCALE_FACTOR * sensitivityMultiplier);
             CallbackBridge.sendCursorPos(CallbackBridge.mouseX, CallbackBridge.mouseY);
         }
 

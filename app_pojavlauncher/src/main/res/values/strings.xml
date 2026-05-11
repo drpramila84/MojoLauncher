@@ -487,6 +487,8 @@
     <string name="preference_category_pc_control">PC Control</string>
     <string name="preference_pc_control_title">Enable PC Control mode</string>
     <string name="preference_pc_control_description">When enabled, on-screen touch buttons are hidden when the game launches. Use a physical keyboard and mouse to control Minecraft, just like on a PC.</string>
+    <string name="preference_pc_mouse_sensitivity_title">Mouse sensitivity</string>
+    <string name="preference_pc_mouse_sensitivity_description">Adjusts how fast the physical mouse moves in-game. Default is 100.</string>
 
     <string name="preference_category_backup">World Backup</string>
     <string name="preference_backup_export_title">Export backup</string>
