@@ -100,7 +100,7 @@ public final class Tools {
 
     // New since 3.3.1
     public static String DIR_ACCOUNT_NEW;
-    public static String DIR_GAME_HOME = Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/PojavLauncher";
+    public static String DIR_GAME_HOME = Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/WitherLauncher";
     public static String DIR_GAME_NEW;
 
     // New since 2.4.2
@@ -121,7 +121,7 @@ public final class Tools {
         }
         File externalStorageDirectory = Environment.getExternalStorageDirectory();
         if(externalStorageDirectory == null) return null;
-        File launcherRoot = new File(externalStorageDirectory,"games/PojavLauncher");
+        File launcherRoot = new File(externalStorageDirectory,"games/WitherLauncher");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState(launcherRoot))) return null;
         return launcherRoot;
     }
