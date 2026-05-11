@@ -503,8 +503,8 @@
     <string name="storage_root_appdata_summary">Runtimes, configs and cached data</string>
 
     <string name="update_dialog_title">Update available!</string>
-    <string name="update_dialog_message">A new version of Wither Launcher is available:\n\n%s\n\nDownload it now to get the latest features and fixes.</string>
-    <string name="update_dialog_download">Download</string>
+    <string name="update_dialog_message">A new version of Wither Launcher (%s) is available.\n\nPlease download the latest version to get new features and fixes.</string>
+    <string name="update_dialog_ok">OK</string>
     <string name="update_dialog_later">Later</string>
 
     <string name="preference_category_backup">World Backup</string>

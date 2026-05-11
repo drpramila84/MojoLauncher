@@ -46,9 +46,6 @@ import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
 import net.kdt.pojavlaunch.utils.NotificationUtils;
 
-import android.content.Intent;
-import android.net.Uri;
-
 import java.lang.ref.WeakReference;
 
 import net.kdt.witherlauncher.R;
@@ -330,15 +327,12 @@ public class LauncherActivity extends BaseActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.update_dialog_title)
                 .setMessage(getString(R.string.update_dialog_message, releaseName))
-                .setPositiveButton(R.string.update_dialog_download, (d, w) -> {
-                    // Dismiss the release so they won't be asked again for THIS version.
+                .setPositiveButton(R.string.update_dialog_ok, (d, w) -> {
+                    // Mark as seen so this release won't pop up again.
                     UpdateChecker.dismissRelease(getApplicationContext(), releaseId);
-                    if (!releaseUrl.isEmpty()) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(releaseUrl)));
-                    }
                 })
                 .setNegativeButton(R.string.update_dialog_later, (d, w) -> {
-                    // "Later" — do NOT persist dismissal so they're reminded next launch.
+                    // "Later" — remind again next launch.
                 })
                 .setCancelable(false)
                 .show();
