@@ -30,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     private GyroControl mGyroControl = null;
     private ControlLayout mControlLayout;
     private HotbarView mHotbarView;
+    private LinearLayout mPcControlIndicator;
 
     Instance instance;
     MinecraftAccount minecraftAccount;
@@ -222,6 +224,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
             mControlLayout.setVisibility(View.GONE);
             mDrawerPullButton.setVisibility(View.GONE);
             mHotbarView.setVisibility(View.GONE);
+            showPcControlIndicator();
             return;
         }
         try {
@@ -239,6 +242,25 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         }
         mDrawerPullButton.setVisibility(mControlLayout.hasMenuButton() ? View.GONE : View.VISIBLE);
         mControlLayout.toggleControlVisible();
+    }
+
+    private void showPcControlIndicator() {
+        if (mPcControlIndicator == null) return;
+        mPcControlIndicator.setAlpha(0f);
+        mPcControlIndicator.setVisibility(View.VISIBLE);
+        mPcControlIndicator.animate()
+                .alpha(1f)
+                .setDuration(400)
+                .withEndAction(() ->
+                        mPcControlIndicator.postDelayed(() ->
+                                mPcControlIndicator.animate()
+                                        .alpha(0f)
+                                        .setDuration(600)
+                                        .withEndAction(() -> mPcControlIndicator.setVisibility(View.GONE))
+                                        .start(),
+                                2500)
+                )
+                .start();
     }
 
     @Override
@@ -261,6 +283,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         touchCharInput = findViewById(R.id.mainTouchCharInput);
         mDrawerPullButton = findViewById(R.id.drawer_button);
         mHotbarView = findViewById(R.id.hotbar_view);
+        mPcControlIndicator = findViewById(R.id.pc_control_indicator);
     }
 
     @Override
