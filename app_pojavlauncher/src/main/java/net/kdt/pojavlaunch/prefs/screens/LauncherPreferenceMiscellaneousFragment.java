@@ -1,6 +1,7 @@
 package net.kdt.pojavlaunch.prefs.screens;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
