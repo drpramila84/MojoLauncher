@@ -483,4 +483,19 @@
     <string name="instance_delete">Delete instance</string>
     <string name="instance_delete_confirmation">Are you sure you want to delete the instance? This will permanently delete all worlds, mods, resources and any other data in the instance directory. This action cannot be undone!</string>
     <string name="import_local_modpack">Import local modpack</string>
+
+    <string name="preference_category_backup">World Backup</string>
+    <string name="preference_backup_export_title">Export backup</string>
+    <string name="preference_backup_export_description">Save worlds, resource packs and control maps to a ZIP file</string>
+    <string name="preference_backup_import_title">Import backup</string>
+    <string name="preference_backup_import_description">Restore worlds, resource packs and control maps from a previously exported ZIP file</string>
+    <string name="backup_export_in_progress">Exporting backup, please wait…</string>
+    <string name="backup_import_in_progress">Importing backup, please wait…</string>
+    <string name="backup_export_success">Backup exported successfully</string>
+    <string name="backup_import_success">Backup restored successfully</string>
+    <string name="backup_export_failed">Export failed: %s</string>
+    <string name="backup_import_failed">Import failed: %s</string>
+    <string name="backup_import_confirm_title">Restore backup?</string>
+    <string name="backup_import_confirm_message">Existing worlds and resource packs with the same name will be overwritten. This cannot be undone. Continue?</string>
+    <string name="backup_default_filename">wither-backup</string>
 </resources>
