@@ -119,7 +119,11 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         // Start the service a bit early
         ContextCompat.startForegroundService(this, gameServiceIntent);
         initLayout(R.layout.activity_basemain);
-        CallbackBridge.addGrabListener(touchpad);
+        // In PC Control mode, never register the touchpad as a grab listener —
+        // the game should only ever use a physical mouse.
+        if (!LauncherPreferences.PREF_PC_CONTROL) {
+            CallbackBridge.addGrabListener(touchpad);
+        }
         CallbackBridge.addGrabListener(minecraftGLView);
 
         mGyroControl = new GyroControl(this);
@@ -217,13 +221,21 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
     private void loadControls() {
         if (LauncherPreferences.PREF_PC_CONTROL) {
-            // PC Control mode: hide all on-screen touch buttons and the hotbar.
-            // Keyboard and physical mouse events are already forwarded to the game
-            // via dispatchKeyEvent -> minecraftGLView.processKeyEvent and the
-            // SOURCE_MOUSE handling inside MinecraftGLSurface.
+            // PC Control mode: completely clean screen — no touch buttons, no virtual
+            // mouse, no soft keyboard. Everything is driven by physical keyboard + mouse.
             mControlLayout.setVisibility(View.GONE);
             mDrawerPullButton.setVisibility(View.GONE);
             mHotbarView.setVisibility(View.GONE);
+
+            // Permanently hide the virtual touchpad (in case it was shown before)
+            touchpad.setVisibility(View.GONE);
+            touchpad.disable();
+
+            // Block the soft keyboard from ever opening in PC Control mode
+            touchCharInput.setEnabled(false);
+            touchCharInput.setFocusable(false);
+            touchCharInput.setFocusableInTouchMode(false);
+
             showPcControlIndicator();
             return;
         }
@@ -458,7 +470,9 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     }
 
     public static void switchKeyboardState() {
-        if(touchCharInput != null) touchCharInput.switchKeyboardState();
+        // Soft keyboard is disabled in PC Control mode — physical keyboard is used instead
+        if(touchCharInput != null && !LauncherPreferences.PREF_PC_CONTROL)
+            touchCharInput.switchKeyboardState();
     }
 
     @Keep
