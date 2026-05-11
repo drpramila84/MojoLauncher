@@ -58,6 +58,16 @@
             app2:selectable="false" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/preference_category_game_files">
+
+        <Preference
+            android:key="browse_game_files"
+            android:title="@string/preference_browse_game_files_title"
+            android:summary="@string/preference_browse_game_files_description"
+            android:icon="@drawable/ic_px_folder" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/preference_category_backup">
 
         <Preference

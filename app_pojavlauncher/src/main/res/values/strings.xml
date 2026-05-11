@@ -492,6 +492,11 @@
     <string name="pc_control_indicator_title">PC Control Active</string>
     <string name="pc_control_indicator_subtitle">Use keyboard and mouse to play</string>
 
+    <string name="preference_category_game_files">Game Files</string>
+    <string name="preference_browse_game_files_title">Browse game files</string>
+    <string name="preference_browse_game_files_description">Open the Wither Launcher game folder (worlds, saves, mods, resource packs) in your file manager</string>
+    <string name="preference_browse_game_files_no_app">No file manager found. Your game files are at: %s</string>
+
     <string name="preference_category_backup">World Backup</string>
     <string name="preference_backup_export_title">Export backup</string>
     <string name="preference_backup_export_description">Save worlds, resource packs and control maps to a ZIP file</string>
