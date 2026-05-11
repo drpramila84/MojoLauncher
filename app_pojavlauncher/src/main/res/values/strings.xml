@@ -502,6 +502,11 @@
     <string name="storage_root_appdata_title">Wither Launcher — App Data</string>
     <string name="storage_root_appdata_summary">Runtimes, configs and cached data</string>
 
+    <string name="update_dialog_title">Update available!</string>
+    <string name="update_dialog_message">A new version of Wither Launcher is available:\n\n%s\n\nDownload it now to get the latest features and fixes.</string>
+    <string name="update_dialog_download">Download</string>
+    <string name="update_dialog_later">Later</string>
+
     <string name="preference_category_backup">World Backup</string>
     <string name="preference_backup_export_title">Export backup</string>
     <string name="preference_backup_export_description">Save worlds, resource packs and control maps to a ZIP file</string>

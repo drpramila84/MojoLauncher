@@ -46,6 +46,9 @@ import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
 import net.kdt.pojavlaunch.utils.NotificationUtils;
 
+import android.content.Intent;
+import android.net.Uri;
+
 import java.lang.ref.WeakReference;
 
 import net.kdt.witherlauncher.R;
@@ -195,6 +198,14 @@ public class LauncherActivity extends BaseActivity {
 
         new AsyncVersionList().getVersionList(versions -> ExtraCore.setValue(ExtraConstants.RELEASE_TABLE, versions));
 
+        // Check GitHub for a newer release and notify the user if one is found.
+        PojavApplication.sExecutorService.execute(() -> {
+            Context appCtx = getApplicationContext();
+            UpdateChecker.check(appCtx, (releaseId, releaseName, releaseUrl) ->
+                runOnUiThread(() -> showUpdateDialog(releaseId, releaseName, releaseUrl))
+            );
+        });
+
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
         mProgressLayout.observe(ProgressLayout.UNPACK_RUNTIME);
         mProgressLayout.observe(ProgressLayout.INSTALL_MODPACK);
@@ -311,6 +322,26 @@ public class LauncherActivity extends BaseActivity {
             mRequestNotificationPermissionRunnable = new WeakReference<>(onSuccessRunnable);
         }
         mRequestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+    }
+
+    /** Show an update-available dialog. Must be called on the main thread. */
+    private void showUpdateDialog(long releaseId, String releaseName, String releaseUrl) {
+        if (isFinishing() || isDestroyed()) return;
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.update_dialog_title)
+                .setMessage(getString(R.string.update_dialog_message, releaseName))
+                .setPositiveButton(R.string.update_dialog_download, (d, w) -> {
+                    // Dismiss the release so they won't be asked again for THIS version.
+                    UpdateChecker.dismissRelease(getApplicationContext(), releaseId);
+                    if (!releaseUrl.isEmpty()) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(releaseUrl)));
+                    }
+                })
+                .setNegativeButton(R.string.update_dialog_later, (d, w) -> {
+                    // "Later" — do NOT persist dismissal so they're reminded next launch.
+                })
+                .setCancelable(false)
+                .show();
     }
 
     /** Stuff all the view boilerplate here */
