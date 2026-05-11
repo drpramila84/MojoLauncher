@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kdt.mcgui.ProgressLayout;
 
-import git.artdeell.mojo.R;
+import net.kdt.witherlauncher.R;
 
 import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.Tools;

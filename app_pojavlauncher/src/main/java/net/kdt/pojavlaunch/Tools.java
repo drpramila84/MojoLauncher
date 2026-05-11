@@ -79,8 +79,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import git.artdeell.mojo.BuildConfig;
-import git.artdeell.mojo.R;
+import net.kdt.witherlauncher.BuildConfig;
+import net.kdt.witherlauncher.R;
 
 @SuppressWarnings("IOStreamConstructor")
 public final class Tools {

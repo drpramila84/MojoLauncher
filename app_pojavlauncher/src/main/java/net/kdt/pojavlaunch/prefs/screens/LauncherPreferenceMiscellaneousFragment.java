@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 
-import git.artdeell.mojo.R;
+import net.kdt.witherlauncher.R;
 
 import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.Tools;

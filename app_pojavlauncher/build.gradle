@@ -50,7 +50,7 @@ configurations {
 }
 
 android {
-    namespace 'git.artdeell.mojo'
+    namespace 'net.kdt.witherlauncher'
 
     compileSdk = 36
 
@@ -80,7 +80,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "git.artdeell.mojo"
+        applicationId "net.kdt.witherlauncher"
         minSdkVersion 21
         targetSdkVersion 36
         versionCode getDateSeconds()
@@ -109,8 +109,8 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.customDebug
-            resValue 'string', 'application_package', 'git.artdeell.mojo.debug'
-            resValue 'string', 'storageProviderAuthorities', 'git.artdeell.mojo.scoped.gamefolder.debug'
+            resValue 'string', 'application_package', 'net.kdt.witherlauncher.debug'
+            resValue 'string', 'storageProviderAuthorities', 'net.kdt.witherlauncher.scoped.gamefolder.debug'
         }
         proguard {
             initWith debug
@@ -129,8 +129,8 @@ android {
             // defaultConfig already set
             // multiDexEnabled = true
             // debuggable = true
-            resValue 'string', 'storageProviderAuthorities', 'git.artdeell.mojo.scoped.gamefolder'
-            resValue 'string', 'application_package', 'git.artdeell.mojo'
+            resValue 'string', 'storageProviderAuthorities', 'net.kdt.witherlauncher.scoped.gamefolder'
+            resValue 'string', 'application_package', 'net.kdt.witherlauncher'
         }
         gplay {
             initWith release
@@ -140,8 +140,8 @@ android {
             initWith release
             signingConfig signingConfigs.customDebug // WIP, changeme
             applicationIdSuffix '.pub'
-            resValue 'string', 'storageProviderAuthorities', 'git.artdeell.mojo.pub.scoped.gamefolder'
-            resValue 'string', 'application_package', 'git.artdeell.mojo.pub'
+            resValue 'string', 'storageProviderAuthorities', 'net.kdt.witherlauncher.pub.scoped.gamefolder'
+            resValue 'string', 'application_package', 'net.kdt.witherlauncher.pub'
         }
     }
 
@@ -239,7 +239,7 @@ class AssetTaskRegistrar {
     }
 
     def onlineZipDependency(String downloadUrl, String name, String relativePath) {
-	    mergeAssetsTask.dependsOn(onlineUnzipTask downloadUrl, name, assetDestination(relativePath))
+            mergeAssetsTask.dependsOn(onlineUnzipTask downloadUrl, name, assetDestination(relativePath))
     }
 
     def projectJarDependency(Project project, String relativePath) {
@@ -299,11 +299,11 @@ afterEvaluate {
         registrar.projectJarDependency project(":forge_installer"), "components/forge_installer"
         registrar.projectJarDependency project(":jre_lwjgl3glfw"), "components/lwjgl3"
 
-		if (variant.getName().toLowerCase().contains("full")) {
+                if (variant.getName().toLowerCase().contains("full")) {
             registrar.jreRuntimeDependency 8, "components/jre"
         }
         
-		def cacioJarUrl = "https://jitpack.io/com/github/MojoLauncher/%1\$s/%2\$s/%3\$s/%2\$s-%3\$s%4\$s.jar"
+                def cacioJarUrl = "https://jitpack.io/com/github/MojoLauncher/%1\$s/%2\$s/%3\$s/%2\$s-%3\$s%4\$s.jar"
 
         registrar.onlineJarDependency cacioJarUrl, "caciocavallo", "cacio-shared", "-01d2dc1d65-1", "", "components/caciocavallo"
         registrar.onlineJarDependency cacioJarUrl, "caciocavallo", "cacio-androidnw", "-01d2dc1d65-1", "", "components/caciocavallo"

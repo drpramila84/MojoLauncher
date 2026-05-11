@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
 
-import git.artdeell.mojo.R;
+import net.kdt.witherlauncher.R;
 
 import fr.spse.extended_view.ExtendedButton;
 

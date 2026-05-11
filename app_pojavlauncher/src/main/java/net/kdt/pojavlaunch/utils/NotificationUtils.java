@@ -8,7 +8,7 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
-import git.artdeell.mojo.R;
+import net.kdt.witherlauncher.R;
 
 public class NotificationUtils {
 
