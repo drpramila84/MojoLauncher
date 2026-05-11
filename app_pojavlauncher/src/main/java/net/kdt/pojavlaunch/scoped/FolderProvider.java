@@ -48,6 +48,7 @@ public class FolderProvider extends DocumentsProvider {
     private static final String ALL_MIME_TYPES = "*/*";
 
     private File BASE_DIR;
+    private File BASE_DIR_APPDATA;
 
     private ContentResolver mContentResolver;
 
@@ -87,6 +88,7 @@ public class FolderProvider extends DocumentsProvider {
             summary = "(" + getContext().getString(R.string.generic_debug) + ") " + summary;
         }
 
+        // Root 1: public game home (worlds, saves, mods, resource packs)
         final MatrixCursor.RowBuilder row = result.newRow();
         row.add(Root.COLUMN_ROOT_ID, getDocIdForFile(BASE_DIR));
         row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(BASE_DIR));
@@ -96,6 +98,21 @@ public class FolderProvider extends DocumentsProvider {
         row.add(Root.COLUMN_MIME_TYPES, ALL_MIME_TYPES);
         row.add(Root.COLUMN_AVAILABLE_BYTES, BASE_DIR.getFreeSpace());
         row.add(Root.COLUMN_ICON, R.mipmap.ic_launcher);
+
+        // Root 2: app external data dir (/Android/data/{package}/) — runtimes, configs, etc.
+        // The app owns this directory and can expose it through SAF so file managers can access it.
+        if (BASE_DIR_APPDATA != null && BASE_DIR_APPDATA.exists()) {
+            final MatrixCursor.RowBuilder row2 = result.newRow();
+            row2.add(Root.COLUMN_ROOT_ID, getDocIdForFile(BASE_DIR_APPDATA));
+            row2.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(BASE_DIR_APPDATA));
+            row2.add(Root.COLUMN_SUMMARY, getContext().getString(R.string.storage_root_appdata_summary));
+            row2.add(Root.COLUMN_FLAGS, Root.FLAG_SUPPORTS_CREATE | Root.FLAG_SUPPORTS_SEARCH | Root.FLAG_SUPPORTS_IS_CHILD);
+            row2.add(Root.COLUMN_TITLE, getContext().getString(R.string.storage_root_appdata_title));
+            row2.add(Root.COLUMN_MIME_TYPES, ALL_MIME_TYPES);
+            row2.add(Root.COLUMN_AVAILABLE_BYTES, BASE_DIR_APPDATA.getFreeSpace());
+            row2.add(Root.COLUMN_ICON, R.mipmap.ic_launcher);
+        }
+
         return result;
     }
 
@@ -144,6 +161,12 @@ public class FolderProvider extends DocumentsProvider {
             return false;
         }
         BASE_DIR = new File(Tools.DIR_GAME_HOME);
+        // Expose the app's own external data directory (/Android/data/{package}/) as a second root.
+        // getExternalFilesDir(null) returns .../Android/data/{package}/files/; its parent is the package dir.
+        java.io.File extFiles = getContext().getExternalFilesDir(null);
+        if (extFiles != null) {
+            BASE_DIR_APPDATA = extFiles.getParentFile();
+        }
         mContentResolver = getContext().getContentResolver();
         mStorageProviderAuthortiy = getContext().getString(R.string.storageProviderAuthorities);
         return true;
@@ -239,13 +262,21 @@ public class FolderProvider extends DocumentsProvider {
         pending.add(parent);
 
         final int MAX_SEARCH_RESULTS = 50;
+        // Determine the canonical root path so symlink traversal stays within this root.
+        String canonicalRootPath;
+        try {
+            canonicalRootPath = parent.getCanonicalPath();
+        } catch (IOException e) {
+            canonicalRootPath = parent.getAbsolutePath();
+        }
+        final String boundaryPath = canonicalRootPath;
+
         while (!pending.isEmpty() && result.getCount() < MAX_SEARCH_RESULTS) {
             final File file = pending.removeFirst();
-            // Avoid directories outside the $HOME directory linked with symlinks (to avoid e.g. search
-            // through the whole SD card).
+            // Avoid directories outside the root linked with symlinks.
             boolean isInsideHome;
             try {
-                isInsideHome = file.getCanonicalPath().startsWith(Tools.DIR_GAME_HOME);
+                isInsideHome = file.getCanonicalPath().startsWith(boundaryPath);
             } catch (IOException e) {
                 isInsideHome = true;
             }

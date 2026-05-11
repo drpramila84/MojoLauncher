@@ -66,6 +66,12 @@
             android:summary="@string/preference_browse_game_files_description"
             android:icon="@drawable/ic_px_folder" />
 
+        <Preference
+            android:key="browse_app_data"
+            android:title="@string/preference_browse_app_data_title"
+            android:summary="@string/preference_browse_app_data_description"
+            android:icon="@drawable/ic_px_folder" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preference_category_backup">

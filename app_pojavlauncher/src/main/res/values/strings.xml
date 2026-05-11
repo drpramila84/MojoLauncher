@@ -496,6 +496,11 @@
     <string name="preference_browse_game_files_title">Browse game files</string>
     <string name="preference_browse_game_files_description">Open the Wither Launcher game folder (worlds, saves, mods, resource packs) in your file manager</string>
     <string name="preference_browse_game_files_no_app">No file manager found. Your game files are at: %s</string>
+    <string name="preference_browse_app_data_title">Browse app data</string>
+    <string name="preference_browse_app_data_description">Open the app\'s data folder (runtimes, configs) in your file manager via the built-in file provider</string>
+    <string name="preference_browse_app_data_no_app">No file manager found. App data is at: %s</string>
+    <string name="storage_root_appdata_title">Wither Launcher — App Data</string>
+    <string name="storage_root_appdata_summary">Runtimes, configs and cached data</string>
 
     <string name="preference_category_backup">World Backup</string>
     <string name="preference_backup_export_title">Export backup</string>

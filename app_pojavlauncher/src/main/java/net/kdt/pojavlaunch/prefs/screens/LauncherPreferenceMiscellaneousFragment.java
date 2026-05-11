@@ -67,6 +67,11 @@ public class LauncherPreferenceMiscellaneousFragment extends LauncherPreferenceF
             return true;
         });
 
+        requirePreference("browse_app_data").setOnPreferenceClickListener(preference -> {
+            openAppDataFolder();
+            return true;
+        });
+
         requirePreference("backup_export").setOnPreferenceClickListener(preference -> {
             String timestamp = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
             String suggestedName = getString(R.string.backup_default_filename) + "-" + timestamp + ".zip";
@@ -100,6 +105,34 @@ public class LauncherPreferenceMiscellaneousFragment extends LauncherPreferenceF
             // No file manager installed — show the raw path as a fallback
             Toast.makeText(requireContext(),
                     getString(R.string.preference_browse_game_files_no_app, gameHomePath),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void openAppDataFolder() {
+        // The app's external data dir (/Android/data/{package}/) is exposed as a second SAF root
+        // via FolderProvider, so SAF-compatible file managers can browse it freely.
+        java.io.File extFiles = requireContext().getExternalFilesDir(null);
+        if (extFiles == null) {
+            Toast.makeText(requireContext(), R.string.preference_browse_app_data_no_app, Toast.LENGTH_LONG).show();
+            return;
+        }
+        java.io.File appDataDir = extFiles.getParentFile();
+        String authority = getString(R.string.storageProviderAuthorities);
+        Uri folderUri = DocumentsContract.buildDocumentUri(authority, appDataDir != null ? appDataDir.getAbsolutePath() : extFiles.getAbsolutePath());
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(folderUri, DocumentsContract.Document.MIME_TYPE_DIR);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.preference_browse_app_data_title)));
+        } catch (ActivityNotFoundException e) {
+            String path = appDataDir != null ? appDataDir.getAbsolutePath() : extFiles.getAbsolutePath();
+            Toast.makeText(requireContext(),
+                    getString(R.string.preference_browse_app_data_no_app, path),
                     Toast.LENGTH_LONG).show();
         }
     }
