@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Back up app preferences and settings -->
+        <include domain="sharedpref" path="." />
+        <!-- Back up internal app files (accounts, control maps, settings) -->
+        <include domain="file" path="." />
+        <!-- Exclude large cached/runtime data that can be re-downloaded -->
+        <exclude domain="file" path="runtimes" />
+        <exclude domain="cache" path="." />
+        <exclude domain="database" path="." />
+    </cloud-backup>
+    <device-transfer>
+        <!-- Include everything for device-to-device transfers -->
+        <include domain="sharedpref" path="." />
+        <include domain="file" path="." />
+        <exclude domain="cache" path="." />
+    </device-transfer>
+</data-extraction-rules>
