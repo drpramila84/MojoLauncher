@@ -484,6 +484,10 @@
     <string name="instance_delete_confirmation">Are you sure you want to delete the instance? This will permanently delete all worlds, mods, resources and any other data in the instance directory. This action cannot be undone!</string>
     <string name="import_local_modpack">Import local modpack</string>
 
+    <string name="preference_category_pc_control">PC Control</string>
+    <string name="preference_pc_control_title">Enable PC Control mode</string>
+    <string name="preference_pc_control_description">When enabled, on-screen touch buttons are hidden when the game launches. Use a physical keyboard and mouse to control Minecraft, just like on a PC.</string>
+
     <string name="preference_category_backup">World Backup</string>
     <string name="preference_backup_export_title">Export backup</string>
     <string name="preference_backup_export_description">Save worlds, resource packs and control maps to a ZIP file</string>

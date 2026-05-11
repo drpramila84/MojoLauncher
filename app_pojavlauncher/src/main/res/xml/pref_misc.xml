@@ -39,6 +39,14 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/preference_category_pc_control">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pcControl"
+            android:summary="@string/preference_pc_control_description"
+            android:title="@string/preference_pc_control_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/preference_category_backup">
 
         <Preference

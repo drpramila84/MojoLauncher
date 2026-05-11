@@ -214,6 +214,16 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     }
 
     private void loadControls() {
+        if (LauncherPreferences.PREF_PC_CONTROL) {
+            // PC Control mode: hide all on-screen touch buttons and the hotbar.
+            // Keyboard and physical mouse events are already forwarded to the game
+            // via dispatchKeyEvent -> minecraftGLView.processKeyEvent and the
+            // SOURCE_MOUSE handling inside MinecraftGLSurface.
+            mControlLayout.setVisibility(View.GONE);
+            mDrawerPullButton.setVisibility(View.GONE);
+            mHotbarView.setVisibility(View.GONE);
+            return;
+        }
         try {
             // Load keys
             mControlLayout.loadLayout(instance.getLaunchControls());

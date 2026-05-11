@@ -27,12 +27,12 @@ public class LauncherPreferences {
     public static SharedPreferences DEFAULT_PREF;
     public static String PREF_RENDERER = "opengles2";
 
-	public static boolean PREF_IGNORE_NOTCH = false;
-	public static float PREF_BUTTONSIZE = 100f;
-	public static float PREF_MOUSESCALE = 1f;
-	public static int PREF_LONGPRESS_TRIGGER = 300;
-	public static String PREF_DEFAULTCTRL_PATH = Tools.CTRLDEF_FILE;
-	public static String PREF_CUSTOM_JAVA_ARGS;
+        public static boolean PREF_IGNORE_NOTCH = false;
+        public static float PREF_BUTTONSIZE = 100f;
+        public static float PREF_MOUSESCALE = 1f;
+        public static int PREF_LONGPRESS_TRIGGER = 300;
+        public static String PREF_DEFAULTCTRL_PATH = Tools.CTRLDEF_FILE;
+        public static String PREF_CUSTOM_JAVA_ARGS;
     public static boolean PREF_FORCE_ENGLISH = false;
     public static final String PREF_VERSION_REPOS = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
     public static boolean PREF_DISABLE_GESTURES = false;
@@ -70,6 +70,7 @@ public class LauncherPreferences {
 
     public static boolean PREF_RAPID_START = true;
     public static boolean PREF_VERIFY_FILES = true;
+    public static boolean PREF_PC_CONTROL = false;
 
 
     public static void loadPreferences(Context ctx) {
@@ -82,8 +83,8 @@ public class LauncherPreferences {
         PREF_MOUSESCALE = DEFAULT_PREF.getInt("mousescale", 100)/100f;
         PREF_MOUSESPEED = ((float)DEFAULT_PREF.getInt("mousespeed",100))/100f;
         PREF_IGNORE_NOTCH = DEFAULT_PREF.getBoolean("ignoreNotch", false);
-		PREF_LONGPRESS_TRIGGER = DEFAULT_PREF.getInt("timeLongPressTrigger", 300);
-		PREF_DEFAULTCTRL_PATH = DEFAULT_PREF.getString("defaultCtrl", Tools.CTRLDEF_FILE);
+                PREF_LONGPRESS_TRIGGER = DEFAULT_PREF.getInt("timeLongPressTrigger", 300);
+                PREF_DEFAULTCTRL_PATH = DEFAULT_PREF.getString("defaultCtrl", Tools.CTRLDEF_FILE);
         PREF_FORCE_ENGLISH = DEFAULT_PREF.getBoolean("force_english", false);
         PREF_DISABLE_GESTURES = DEFAULT_PREF.getBoolean("disableGestures",false);
         PREF_DISABLE_SWAP_HAND = DEFAULT_PREF.getBoolean("disableDoubleTap", false);
@@ -113,6 +114,7 @@ public class LauncherPreferences {
         PREF_VSYNC_IN_ZINK = DEFAULT_PREF.getBoolean("vsync_in_zink", true);
         PREF_VERIFY_FILES = DEFAULT_PREF.getBoolean("checkGameFiles", true);
         PREF_RAPID_START = DEFAULT_PREF.getBoolean("fastStartupCheck", true);
+        PREF_PC_CONTROL = DEFAULT_PREF.getBoolean("pcControl", false);
 
         String argLwjglLibname = "-Dorg.lwjgl.opengl.libname=";
         for (String arg : JREUtils.parseJavaArguments(PREF_CUSTOM_JAVA_ARGS)) {
