@@ -9,5 +9,7 @@ public class SearchFilters {
     public boolean isModpack;
     public String name;
     @Nullable public String mcVersion;
+    /** Loader slug: "fabric", "forge", "quilt", "neoforge", or null for any */
+    @Nullable public String modLoader;
 
 }

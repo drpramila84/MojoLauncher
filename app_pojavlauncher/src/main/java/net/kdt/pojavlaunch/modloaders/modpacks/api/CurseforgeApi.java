@@ -64,6 +64,9 @@ public class CurseforgeApi implements ModpackApi{
         params.put("sortOrder", "desc");
         if(searchFilters.mcVersion != null && !searchFilters.mcVersion.isEmpty())
             params.put("gameVersion", searchFilters.mcVersion);
+        int cfModLoaderType = curseforgeModLoaderType(searchFilters.modLoader);
+        if(cfModLoaderType != -1)
+            params.put("modLoaderType", cfModLoaderType);
         if(previousPageResult != null)
             params.put("index", curseforgeSearchResult.previousOffset);
 
@@ -266,6 +269,21 @@ public class CurseforgeApi implements ModpackApi{
             }
         }
         return null;
+    }
+
+    /**
+     * Maps a loader slug to the CurseForge modLoaderType integer.
+     * Returns -1 if no filter should be applied.
+     */
+    private static int curseforgeModLoaderType(@Nullable String modLoader) {
+        if(modLoader == null || modLoader.isEmpty()) return -1;
+        switch(modLoader) {
+            case "forge":    return 1;
+            case "fabric":   return 4;
+            case "quilt":    return 5;
+            case "neoforge": return 6;
+            default:         return -1;
+        }
     }
 
     private boolean verifyManifest(CurseManifest manifest) {

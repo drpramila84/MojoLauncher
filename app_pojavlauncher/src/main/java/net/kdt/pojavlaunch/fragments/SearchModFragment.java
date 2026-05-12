@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -206,25 +207,53 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
             TextView mSelectedVersion = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
             Button mSelectVersionButton = dialog.findViewById(R.id.search_mod_mc_version_button);
             Button mApplyButton = dialog.findViewById(R.id.search_mod_apply_filters);
+            RadioGroup mLoaderRadioGroup = dialog.findViewById(R.id.search_mod_loader_radio_group);
 
             assert mSelectVersionButton != null;
             assert mSelectedVersion != null;
             assert mApplyButton != null;
+            assert mLoaderRadioGroup != null;
 
-            // Setup the expendable list behavior
-            mSelectVersionButton.setOnClickListener(v -> VersionSelectorDialog.open(v.getContext(), true, (id, snapshot)-> mSelectedVersion.setText(id)));
+            // Setup the version selector behavior
+            mSelectVersionButton.setOnClickListener(v -> VersionSelectorDialog.open(v.getContext(), true, (id, snapshot) -> mSelectedVersion.setText(id)));
 
             // Apply visually all the current settings
             mSelectedVersion.setText(mSearchFilters.mcVersion);
 
+            // Pre-select the previously chosen loader
+            int checkedLoaderId = loaderSlugToRadioId(mSearchFilters.modLoader);
+            mLoaderRadioGroup.check(checkedLoaderId);
+
             // Apply the new settings
             mApplyButton.setOnClickListener(v -> {
                 mSearchFilters.mcVersion = mSelectedVersion.getText().toString();
+                mSearchFilters.modLoader = radioIdToLoaderSlug(mLoaderRadioGroup.getCheckedRadioButtonId());
                 searchMods(mSearchEditText.getText().toString());
                 dialogInterface.dismiss();
             });
         });
 
         dialog.show();
+    }
+
+    /** Returns the RadioButton id that corresponds to the given loader slug, defaulting to "Any". */
+    private int loaderSlugToRadioId(String slug) {
+        if (slug == null) return R.id.search_mod_loader_any;
+        switch (slug) {
+            case "fabric":   return R.id.search_mod_loader_fabric;
+            case "forge":    return R.id.search_mod_loader_forge;
+            case "quilt":    return R.id.search_mod_loader_quilt;
+            case "neoforge": return R.id.search_mod_loader_neoforge;
+            default:         return R.id.search_mod_loader_any;
+        }
+    }
+
+    /** Returns the loader slug that corresponds to the given RadioButton id, or null for "Any". */
+    private String radioIdToLoaderSlug(int radioId) {
+        if (radioId == R.id.search_mod_loader_fabric)   return "fabric";
+        if (radioId == R.id.search_mod_loader_forge)    return "forge";
+        if (radioId == R.id.search_mod_loader_quilt)    return "quilt";
+        if (radioId == R.id.search_mod_loader_neoforge) return "neoforge";
+        return null;
     }
 }
