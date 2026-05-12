@@ -26,7 +26,7 @@ public class LibraryPlugin {
 
         String libraryPath;
         try {
-            PackageInfo pluginPackage = ctx.getPackageManager().getPackageInfo(appId, PackageManager.GET_SHARED_LIBRARY_FILES);
+            PackageInfo pluginPackage = ctx.getPackageManager().getPackageInfo(appId, 0);
             libraryPath = pluginPackage.applicationInfo.nativeLibraryDir;
 
         } catch (Exception e){

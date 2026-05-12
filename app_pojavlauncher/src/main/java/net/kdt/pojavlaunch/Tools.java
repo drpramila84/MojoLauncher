@@ -116,13 +116,13 @@ public final class Tools {
 
 
     private static @Nullable File getPojavStorageRoot(Context ctx) {
-        if(SDK_INT >= 29) {
-            return ctx.getExternalFilesDir(null);
-        }
+        // Always use shared external storage so game data (mods, worlds, etc.)
+        // persists across app reinstalls. On Android 11+ this requires
+        // MANAGE_EXTERNAL_STORAGE permission (requested in TestStorageActivity).
         File externalStorageDirectory = Environment.getExternalStorageDirectory();
-        if(externalStorageDirectory == null) return null;
-        File launcherRoot = new File(externalStorageDirectory,"games/WitherLauncher");
-        if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState(launcherRoot))) return null;
+        if (externalStorageDirectory == null) return null;
+        File launcherRoot = new File(externalStorageDirectory, "games/WitherLauncher");
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState(launcherRoot))) return null;
         return launcherRoot;
     }
 
