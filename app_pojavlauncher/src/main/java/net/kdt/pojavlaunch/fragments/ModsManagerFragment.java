@@ -3,7 +3,10 @@ package net.kdt.pojavlaunch.fragments;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -154,6 +157,22 @@ public class ModsManagerFragment extends Fragment
         mFilterButton.setOnClickListener(v -> showFilterDialog());
         mVersionFilterChip.setOnClickListener(v -> showFilterDialog());
 
+        // Press-scale feedback: shrink slightly on touch-down, spring back on release
+        mVersionFilterChip.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.animate().scaleX(0.95f).scaleY(0.95f)
+                            .setDuration(80).setInterpolator(new DecelerateInterpolator()).start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1f).scaleY(1f)
+                            .setDuration(160).setInterpolator(new OvershootInterpolator(2f)).start();
+                    break;
+            }
+            return false;
+        });
+
         mBrowseTab.setOnClickListener(v -> switchTab(TAB_BROWSE));
         mInstalledTab.setOnClickListener(v -> switchTab(TAB_INSTALLED));
 
@@ -288,11 +307,28 @@ public class ModsManagerFragment extends Fragment
      * Opens the version picker immediately when the Browse tab loads.
      * Mods are only fetched after the user selects a version, preventing
      * incompatible mod installations.
+     * The version button pulses to draw the user's eye before the dialog opens.
      */
     private void showVersionPickerPrompt() {
         mBrowseStatusText.setTextColor(mDefaultTextColor);
         mBrowseStatusText.setText(R.string.mods_select_version_prompt);
         mBrowseStatusText.setVisibility(View.VISIBLE);
+
+        // Pulse the button once so the user knows where to tap
+        mVersionFilterChip.animate().cancel();
+        mVersionFilterChip.setScaleX(1f);
+        mVersionFilterChip.setScaleY(1f);
+        mVersionFilterChip.animate()
+                .scaleX(1.06f).scaleY(1.06f)
+                .setDuration(180)
+                .setInterpolator(new DecelerateInterpolator())
+                .withEndAction(() -> mVersionFilterChip.animate()
+                        .scaleX(1f).scaleY(1f)
+                        .setDuration(220)
+                        .setInterpolator(new OvershootInterpolator(2.5f))
+                        .start())
+                .start();
+
         VersionSelectorDialog.open(requireContext(), true, (version, snapshot) -> {
             mSearchFilters.mcVersion = version;
             updateVersionChip();
@@ -300,7 +336,10 @@ public class ModsManagerFragment extends Fragment
         });
     }
 
-    /** Updates the filter chip text to reflect the current version + loader selection. */
+    /**
+     * Updates the version button text and plays a smooth scale + fade pop-in so the
+     * user clearly sees the filter has changed.
+     */
     private void updateVersionChip() {
         StringBuilder sb = new StringBuilder();
         if (mSearchFilters.mcVersion != null && !mSearchFilters.mcVersion.isEmpty()) {
@@ -311,13 +350,27 @@ public class ModsManagerFragment extends Fragment
             String loader = mSearchFilters.modLoader;
             sb.append(Character.toUpperCase(loader.charAt(0))).append(loader.substring(1));
         }
-        if (sb.length() == 0) {
-            mVersionFilterChip.setText(R.string.mods_version_chip_hint);
-            mVersionFilterChip.setAlpha(0.55f);
-        } else {
+
+        final boolean hasVersion = sb.length() > 0;
+        if (hasVersion) {
+            // Append a subtle "tap to change" hint so the user knows it's interactive
+            sb.append("   ▸");
             mVersionFilterChip.setText(sb.toString());
-            mVersionFilterChip.setAlpha(1.0f);
+        } else {
+            mVersionFilterChip.setText(R.string.mods_version_chip_hint);
         }
+
+        // Cancel any running animator then pop in with scale + fade
+        mVersionFilterChip.animate().cancel();
+        mVersionFilterChip.setScaleX(0.88f);
+        mVersionFilterChip.setScaleY(0.88f);
+        mVersionFilterChip.setAlpha(hasVersion ? 0.3f : 0.6f);
+        mVersionFilterChip.animate()
+                .scaleX(1f).scaleY(1f)
+                .alpha(hasVersion ? 1f : 0.7f)
+                .setDuration(300)
+                .setInterpolator(new OvershootInterpolator(1.4f))
+                .start();
     }
 
     private void showFilterDialog() {

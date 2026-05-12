@@ -118,21 +118,26 @@
             app:layout_constraintTop_toBottomOf="@id/mods_search_edittext"
             tools:visibility="visible" />
 
-        <!-- Active-filters chip — shows selected version + loader, tap to change -->
+        <!-- Version selector button — big, prominent, tap to change version/loader -->
         <TextView
             android:id="@+id/mods_version_chip"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_small"
-            android:paddingHorizontal="@dimen/padding_medium"
-            android:paddingVertical="@dimen/padding_small"
-            android:background="@drawable/background_line"
-            android:textSize="@dimen/_11ssp"
+            android:layout_marginTop="@dimen/padding_medium"
+            android:paddingHorizontal="@dimen/padding_heavy"
+            android:paddingVertical="@dimen/_13sdp"
+            android:background="@drawable/background_version_button"
+            android:drawablePadding="@dimen/padding_medium"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/_13ssp"
+            android:textColor="@color/primary_text"
+            android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end"
             app:layout_constraintTop_toBottomOf="@id/mods_progressbar"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="MC 1.21.1  ·  Fabric" />
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="🎮  MC 1.21.1  ·  Fabric  ✏" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
