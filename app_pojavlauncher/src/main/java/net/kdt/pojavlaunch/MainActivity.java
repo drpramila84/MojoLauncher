@@ -486,8 +486,8 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
                     String path = link.substring(truncLength);
                     Tools.openPath(ctx, new File(path), false);
                 }else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(link), "*/*");
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     ctx.startActivity(intent);
                 }
             } catch (Throwable th) {
