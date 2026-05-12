@@ -129,14 +129,50 @@ public class FolderProvider extends DocumentsProvider {
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection, String sortOrder) throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
         final File parent = getFileForDocId(parentDocumentId);
+
+        // Guard: only serve documents inside our declared roots to prevent
+        // navigating into restricted sibling directories (e.g. Android/data on API 30+).
+        if (!isUnderDeclaredRoot(parent)) {
+            result.setNotificationUri(mContentResolver, createUriForDocId(parentDocumentId));
+            return result;
+        }
+
         final File[] children = parent.listFiles();
-        if(children == null) throw new FileNotFoundException("Unable to list files in "+parent.getAbsolutePath());
-        for (File file : children) {
-            includeFile(result, null, file);
+        // On Android 11+ listFiles() returns null for restricted directories (e.g. Android/data).
+        // Return an empty cursor instead of throwing so the file manager shows an empty folder
+        // rather than "Access is denied".
+        if (children != null) {
+            for (File file : children) {
+                includeFile(result, null, file);
+            }
         }
         // Set the notification URI as that's what the "Files" app will be listening to in case of file deletion
         result.setNotificationUri(mContentResolver, createUriForDocId(parentDocumentId));
         return result;
+    }
+
+    /**
+     * Returns true if the given file is located inside one of the roots this provider declared.
+     * Prevents serving restricted paths like Android/data when a file manager navigates upward.
+     */
+    private boolean isUnderDeclaredRoot(File file) {
+        try {
+            String canonical = file.getCanonicalPath();
+            if (BASE_DIR != null) {
+                String root1 = BASE_DIR.getCanonicalPath();
+                if (canonical.startsWith(root1)) return true;
+            }
+            if (BASE_DIR_APPDATA != null) {
+                String root2 = BASE_DIR_APPDATA.getCanonicalPath();
+                if (canonical.startsWith(root2)) return true;
+            }
+        } catch (java.io.IOException e) {
+            // Fall back to simple string comparison
+            String abs = file.getAbsolutePath();
+            if (BASE_DIR != null && abs.startsWith(BASE_DIR.getAbsolutePath())) return true;
+            if (BASE_DIR_APPDATA != null && abs.startsWith(BASE_DIR_APPDATA.getAbsolutePath())) return true;
+        }
+        return false;
     }
 
     @Override
