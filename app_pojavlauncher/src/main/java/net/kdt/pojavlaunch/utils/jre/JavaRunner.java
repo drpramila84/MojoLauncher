@@ -123,13 +123,9 @@ public class JavaRunner {
                 "-Dsodium.checks.issue2561=false",
                 "-Djdk.lang.Process.launchMechanism=FORK", // Default is POSIX_SPAWN which requires starting jspawnhelper, which doesn't work on Android
 
-                // --- Smoothness / GC tuning ---
-                // Keep individual GC pauses short to reduce in-game stutter (especially on servers).
-                // Users can override any of these by adding the same flag in the JVM args settings.
-                "-XX:MaxGCPauseMillis=200",      // Target: pause at most 200 ms per GC cycle (conservative, safe)
-                "-XX:G1HeapRegionSize=8m",        // 8 MB regions work safely across all heap sizes
-                "-XX:G1NewSizePercent=20",        // Sufficient young-gen to absorb Minecraft's object churn
-                "-XX:G1ReservePercent=20"         // Emergency reserve so G1 isn't caught off-guard
+                // --- GC tuning (conservative, safe across all heap sizes and JVM versions) ---
+                "-XX:MaxGCPauseMillis=200",      // Target: pause at most 200 ms per GC cycle
+                "-XX:G1HeapRegionSize=8m"         // 8 MB regions work safely across all heap sizes
         ));
         List<String> additionalArguments = new ArrayList<>();
         for(String arg : overridableArguments) {
@@ -152,10 +148,12 @@ public class JavaRunner {
 
         // Boolean GC flags (no '=' sign, so they can't go in overridableArguments above).
         // Added only if the user hasn't already specified them.
+        // Only UseG1GC — safe boolean flag.
+        // DO NOT add -XX:+DisableExplicitGC: Minecraft and mods call System.gc() to free
+        // native/OpenGL resources on servers; blocking it causes memory build-up and full GC freezes.
+        // DO NOT add -XX:+ParallelRefProcEnabled: removed in Java 17+ (always-on), causes Bad arguments.
         String[] gcBoolFlags = {
-                "-XX:+UseG1GC",          // G1 is the best GC for Minecraft's mixed allocation pattern
-                "-XX:+DisableExplicitGC" // Ignore System.gc() calls from mods/Minecraft (prevents stutter spikes)
-                // Note: -XX:+ParallelRefProcEnabled was removed in Java 17+ (always enabled) — do NOT add it
+                "-XX:+UseG1GC"
         };
         for (String flag : gcBoolFlags) {
             if (!userArguments.contains(flag)) {
