@@ -179,6 +179,18 @@ public class Instances {
     }
 
     /**
+     * Load an instance from a specific root directory.
+     * @param instanceRoot the root directory of the instance
+     * @return the loaded instance, or null if it could not be loaded
+     */
+    public static Instance loadFromRoot(File instanceRoot) {
+        Instance instance = read(instanceRoot, Instance.class);
+        if (instance == null) return null;
+        instance.sanitize();
+        return instance;
+    }
+
+    /**
      * Load the currently selected instance. Note that this method must not be used along with any code
      * which uses getImmutableInstanceList()
      * @return currently selected instance

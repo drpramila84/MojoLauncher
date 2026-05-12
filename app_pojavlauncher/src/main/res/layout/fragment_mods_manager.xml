@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_app"
+    android:paddingHorizontal="@dimen/fragment_padding_medium">
+
+    <!-- Floating header overlay: instance title + search bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mods_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:translationZ="10dp"
+        android:background="@drawable/background_overlay"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:paddingVertical="@dimen/padding_medium"
+        android:layout_marginTop="@dimen/fragment_padding_medium"
+        android:layout_marginHorizontal="@dimen/fragment_padding_medium"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Instance title -->
+        <TextView
+            android:id="@+id/mods_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/_13ssp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="@dimen/padding_medium"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Mods — My Instance" />
+
+        <!-- Search field -->
+        <EditText
+            android:id="@+id/mods_search_edittext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_line"
+            android:textSize="@dimen/_13ssp"
+            android:translationZ="2dp"
+            android:ems="10"
+            android:hint="@string/mods_search_hint"
+            android:inputType="textPersonName"
+            android:paddingHorizontal="@dimen/padding_heavy"
+            app:layout_constraintTop_toBottomOf="@id/mods_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/mods_filter_button" />
+
+        <!-- Filter button -->
+        <ImageButton
+            android:id="@+id/mods_filter_button"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:minWidth="@dimen/_38sdp"
+            android:src="@drawable/ic_filter"
+            android:paddingHorizontal="@dimen/padding_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/mods_search_edittext"
+            app:layout_constraintBottom_toBottomOf="@id/mods_search_edittext" />
+
+        <!-- Indeterminate progress bar shown while searching -->
+        <ProgressBar
+            android:id="@+id/mods_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/mods_search_edittext"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Mod results list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mods_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="@dimen/_15sdp"
+        android:clipToPadding="false"
+        android:layout_marginBottom="@dimen/padding_moderate"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Status message (no results / error) -->
+    <TextView
+        android:id="@+id/mods_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/mods_list"
+        app:layout_constraintBottom_toBottomOf="@id/mods_list"
+        app:layout_constraintStart_toStartOf="@id/mods_list"
+        app:layout_constraintEnd_toEndOf="@id/mods_list"
+        tools:text="No mods found"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,10 @@ public class DisplayInstance {
     protected DisplayInstance() {
     }
 
+    public File getInstanceRoot() {
+        return mInstanceRoot;
+    }
+
     protected File getInstanceIconLocation() {
         return new File(mInstanceRoot, "icon.webp");
     }

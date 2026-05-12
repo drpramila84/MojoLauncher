@@ -521,4 +521,13 @@
     <string name="backup_import_confirm_title">Restore backup?</string>
     <string name="backup_import_confirm_message">Existing worlds and resource packs with the same name will be overwritten. This cannot be undone. Continue?</string>
     <string name="backup_default_filename">wither-backup</string>
+
+    <string name="mods_button_label">Mods</string>
+    <string name="mods_select_instance_title">Select Instance</string>
+    <string name="mods_for_instance">Mods — %s</string>
+    <string name="mods_search_hint">Search mods on Modrinth…</string>
+    <string name="mods_install_success">Mod installed successfully!</string>
+    <string name="mod_install_downloading">Downloading mod…</string>
+    <string name="mods_search_no_result">No mods found</string>
+    <string name="mods_search_error">Failed to search mods</string>
 </resources>
