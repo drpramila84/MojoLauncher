@@ -185,6 +185,42 @@ public final class Tools {
         CTRLDEF_FILE = DIR_GAME_HOME + "/controlmap/default.json";
     }
 
+    /**
+     * Creates all standard game folders under the launcher root so users can
+     * see the full directory structure in file managers (e.g. ZArchiver)
+     * immediately after installing the app — no need to launch a game first.
+     */
+    public static void createGameDirectories() {
+        // Folders visible directly in WitherLauncher/
+        String[] homeDirs = {
+            DIR_GAME_HOME,
+            CTRLMAP_PATH,
+            DIR_GAME_HOME + "/instances",
+        };
+        // Standard .minecraft sub-folders
+        String[] minecraftDirs = {
+            DIR_GAME_NEW,
+            DIR_GAME_NEW + "/mods",
+            DIR_GAME_NEW + "/resourcepacks",
+            DIR_GAME_NEW + "/saves",
+            DIR_GAME_NEW + "/screenshots",
+            DIR_GAME_NEW + "/shaderpacks",
+            DIR_GAME_NEW + "/texturepacks",
+            DIR_GAME_NEW + "/config",
+            DIR_GAME_NEW + "/logs",
+            DIR_HOME_CRASH,
+            DIR_HOME_VERSION,
+            DIR_HOME_LIBRARY,
+            ASSETS_PATH,
+        };
+        for (String path : homeDirs) {
+            new File(path).mkdirs();
+        }
+        for (String path : minecraftDirs) {
+            new File(path).mkdirs();
+        }
+    }
+
     public static void buildNotificationChannel(Context context){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
         NotificationChannel channel = new NotificationChannel(

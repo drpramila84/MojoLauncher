@@ -64,6 +64,9 @@ public class AsyncAssetManager {
     public static void unpackSingleFiles(Context ctx){
         ProgressLayout.setProgress(ProgressLayout.EXTRACT_SINGLE_FILES, 0);
         sExecutorService.execute(() -> {
+            // Ensure all standard game folders exist so users can see them in
+            // file managers (ZArchiver, etc.) right after installing the app.
+            Tools.createGameDirectories();
             try {
                 Tools.copyAssetFile(ctx, "default.json", Tools.CTRLMAP_PATH, false);
                 Tools.copyAssetFile(ctx, "launcher_profiles.json", Tools.DIR_GAME_NEW, false);
