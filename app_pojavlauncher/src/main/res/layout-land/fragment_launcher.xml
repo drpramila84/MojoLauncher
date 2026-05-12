@@ -23,15 +23,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- Row 1: Discord (left) | Mods (right) side by side -->
             <com.kdt.mcgui.LauncherMenuButton
                 android:id="@+id/social_media_button"
                 style="@style/LauncherMenuButton.Universal"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:drawableStart="@drawable/ic_social_media"
                 android:text="@string/mcl_button_social_media"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toStartOf="@id/mods_button"
+                app:layout_constraintHorizontal_chainStyle="spread" />
+
+            <com.kdt.mcgui.LauncherMenuButton
+                android:id="@+id/mods_button"
+                style="@style/LauncherMenuButton.Universal"
+                android:layout_width="0dp"
+                android:drawableStart="@drawable/ic_modrinth"
+                android:text="@string/mods_button_label"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/social_media_button"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <com.kdt.mcgui.LauncherMenuButton
                 android:id="@+id/custom_control_button"
