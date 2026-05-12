@@ -126,7 +126,7 @@ public class MultiRTUtils {
                 return null;
             }
         }catch (IOException e) {
-            e.printStackTrace();
+            android.util.Log.e("MultiRTUtils", "Failed to read runtime version for " + name, e);
             return null;
         }
     }

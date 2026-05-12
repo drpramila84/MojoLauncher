@@ -381,7 +381,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
             try {
                 mControlLayout.loadLayout(LauncherPreferences.PREF_DEFAULTCTRL_PATH);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.w("MainActivity", "Failed to load default control layout", e);
             }
         }
     }

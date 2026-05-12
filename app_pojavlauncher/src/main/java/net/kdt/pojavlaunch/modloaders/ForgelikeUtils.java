@@ -46,12 +46,11 @@ public abstract class ForgelikeUtils {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             saxParser = parserFactory.newSAXParser();
         } catch (SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
+            Log.e("ForgelikeUtils", "Failed to create SAX parser", e);
             // if we cant make a parser we might as well not even try to parse anything
             return null;
         }
         try {
-            //of_test();
             return DownloadUtils.downloadStringCached(mMetadataUrl, mCachePrefix + "_versions", input -> {
                 try {
                     ForgelikeVersionListHandler handler = new ForgelikeVersionListHandler();
@@ -64,7 +63,7 @@ public abstract class ForgelikeUtils {
                 }
             });
         } catch (DownloadUtils.ParseException e) {
-            e.printStackTrace();
+            Log.e("ForgelikeUtils", "Failed to parse " + mName + " version list", e);
             return null;
         }
     }
@@ -120,9 +119,10 @@ public abstract class ForgelikeUtils {
         // and the loader version at once
         try {
             int firstIndex = neoVersion.indexOf('.');
-            int secondIndex = neoVersion.indexOf('.', firstIndex + 1);
+            int secondIndex = firstIndex == -1 ? -1 : neoVersion.indexOf('.', firstIndex + 1);
             if (firstIndex == -1 || secondIndex == -1) {
                 Log.e("NeoforgeUtils", "Failed to parse neoforge version: " + neoVersion + "; not enough '.' found");
+                return neoVersion;
             }
             return "1." + neoVersion.substring(0, secondIndex);
         } catch (StringIndexOutOfBoundsException e) {

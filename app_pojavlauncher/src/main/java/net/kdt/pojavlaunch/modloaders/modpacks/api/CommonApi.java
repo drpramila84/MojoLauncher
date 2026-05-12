@@ -83,7 +83,7 @@ public class CommonApi implements ModpackApi {
                 totalSize += searchResult.totalResultCount;
             }catch (Exception e) {
                 cancelAllFutures(futures);
-                e.printStackTrace();
+                Log.e("CommonApi", "Error fetching search results", e);
                 return null;
             }
         }
@@ -146,8 +146,11 @@ public class CommonApi implements ModpackApi {
             case Constants.SOURCE_MODRINTH:
                 return mModrinthApi;
             case Constants.SOURCE_CURSEFORGE:
-                if (mCurseforgeApi == null) return null;
-                else return mCurseforgeApi;
+                if (mCurseforgeApi != null) return mCurseforgeApi;
+                // CurseForge was requested but no API key is configured — fall back to Modrinth
+                // to avoid a NullPointerException at the call site.
+                Log.w("CommonApi", "CurseForge API requested but not configured; falling back to Modrinth");
+                return mModrinthApi;
             default:
                 throw new UnsupportedOperationException("Unknown API source: " + apiSource);
         }

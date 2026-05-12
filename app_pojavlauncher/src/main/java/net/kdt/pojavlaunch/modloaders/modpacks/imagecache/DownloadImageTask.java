@@ -54,7 +54,7 @@ class DownloadImageTask implements Runnable {
             }
             return true;
         }catch (IOException e) {
-            e.printStackTrace();
+            android.util.Log.w("DownloadImageTask", "Failed to download or resize mod icon", e);
             return false;
         }
     }

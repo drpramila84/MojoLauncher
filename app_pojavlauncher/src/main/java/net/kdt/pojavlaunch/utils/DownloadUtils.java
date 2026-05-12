@@ -42,7 +42,7 @@ public class DownloadUtils {
                 try {
                     is.close();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.w("DownloadUtils", "Failed to close input stream", e);
                 }
             }
         }
@@ -67,22 +67,29 @@ public class DownloadUtils {
         FileUtils.ensureParentDirectory(outputFile);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(urlInput).openConnection();
-        InputStream readStr = conn.getInputStream();
-        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+        conn.setRequestProperty("User-Agent", USER_AGENT);
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(30000);
+        conn.connect();
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            conn.disconnect();
+            throw new IOException("Server returned HTTP " + conn.getResponseCode()
+                    + ": " + conn.getResponseMessage());
+        }
+        if (buffer == null) buffer = new byte[65535];
+        int length = conn.getContentLength();
+        try (InputStream readStr = conn.getInputStream();
+             FileOutputStream fos = new FileOutputStream(outputFile)) {
             int current;
             int overall = 0;
-            int length = conn.getContentLength();
-
-            if (buffer == null) buffer = new byte[65535];
-
             while ((current = readStr.read(buffer)) != -1) {
                 overall += current;
                 fos.write(buffer, 0, current);
                 monitor.updateProgress(overall, length);
             }
+        } finally {
             conn.disconnect();
         }
-
     }
 
     public static <T> T downloadStringCached(String url, String cacheName, ParseCallback<T> parseCallback) throws IOException, ParseException{

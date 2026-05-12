@@ -68,7 +68,7 @@ public class ApiHandler {
             conn.disconnect();
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w("ApiHandler", "GET request failed: " + url, e);
         }
         return null;
     }
@@ -98,7 +98,7 @@ public class ApiHandler {
             conn.disconnect();
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w("ApiHandler", "POST request failed: " + url, e);
         }
         return null;
     }

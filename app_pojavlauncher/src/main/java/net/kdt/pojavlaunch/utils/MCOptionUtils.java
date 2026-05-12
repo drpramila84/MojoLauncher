@@ -19,6 +19,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +45,7 @@ public class MCOptionUtils {
         if(!optionFile.exists()) {
             try { // Needed for new instances I guess  :think:
                 optionFile.createNewFile();
-            } catch (IOException e) { e.printStackTrace(); }
+            } catch (IOException e) { Log.w(Tools.APP_NAME, "Failed to create options.txt", e); }
         }
 
         if(sFileObserver == null || !Objects.equals(sOptionFolderPath, folderPath)){
@@ -108,9 +109,10 @@ public class MCOptionUtils {
                     .append('\n');
 
         try {
-            sFileObserver.stopWatching();
+            // sFileObserver may be null if load() was never called (e.g. options.txt didn't exist yet)
+            if (sFileObserver != null) sFileObserver.stopWatching();
             Tools.write(sOptionFolderPath + "/options.txt", result.toString());
-            sFileObserver.startWatching();
+            if (sFileObserver != null) sFileObserver.startWatching();
         } catch (IOException e) {
             Log.w(Tools.APP_NAME, "Could not save options.txt", e);
         }
@@ -170,12 +172,12 @@ public class MCOptionUtils {
 
     /** Remove a listener from existence, or at least, its reference here */
     public static void removeMCOptionListener(MCOptionListener listener){
-        for(WeakReference<MCOptionListener> weakReference : sOptionListeners){
-            MCOptionListener optionListener = weakReference.get();
-            if(optionListener == null) continue;
-            if(optionListener == listener){
-                sOptionListeners.remove(weakReference);
-                return;
+        Iterator<WeakReference<MCOptionListener>> iterator = sOptionListeners.iterator();
+        while (iterator.hasNext()) {
+            MCOptionListener optionListener = iterator.next().get();
+            if(optionListener == null || optionListener == listener){
+                iterator.remove();
+                if(optionListener == listener) return;
             }
         }
     }

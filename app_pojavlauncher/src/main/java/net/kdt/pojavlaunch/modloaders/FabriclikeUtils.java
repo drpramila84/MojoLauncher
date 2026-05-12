@@ -58,7 +58,7 @@ public class FabriclikeUtils {
                     }});
 
         }catch (DownloadUtils.ParseException e) {
-            e.printStackTrace();
+            android.util.Log.e("FabriclikeUtils", "Failed to parse loader versions for " + mName, e);
         }
         return null;
     }
@@ -87,7 +87,7 @@ public class FabriclikeUtils {
             JSONObject fabricJsonObject = new JSONObject(fabricJson);
             versionId = fabricJsonObject.getString("id");
         }catch (JSONException e) {
-            e.printStackTrace();
+            android.util.Log.e("FabriclikeUtils", "Failed to parse fabric profile JSON", e);
             return null;
         }
         File versionJsonDir = new File(Tools.DIR_HOME_VERSION, versionId);
@@ -119,8 +119,8 @@ public class FabriclikeUtils {
         try {
             return Tools.GLOBAL_GSON.fromJson(jsonArrayIn, FabricVersion[].class);
         }catch (JsonSyntaxException e) {
-            e.printStackTrace();
-            throw new DownloadUtils.ParseException(null);
+            android.util.Log.w("FabriclikeUtils", "Failed to deserialize game versions", e);
+            throw new DownloadUtils.ParseException(e);
         }
     }
 }

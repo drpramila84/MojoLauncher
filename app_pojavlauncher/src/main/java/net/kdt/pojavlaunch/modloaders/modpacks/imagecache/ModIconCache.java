@@ -98,8 +98,7 @@ public class ModIconCache {
             if(bitmap == null) return;
             instance.encodeNewIcon(bitmap);
         }catch (IOException e) {
-            Log.i("ModIconCache", "Failed to reencode icon for instance");
-            e.printStackTrace();
+            Log.w("ModIconCache", "Failed to reencode icon for instance", e);
         }
     }
 }

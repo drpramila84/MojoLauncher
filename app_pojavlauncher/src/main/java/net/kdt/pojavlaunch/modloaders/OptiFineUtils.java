@@ -16,7 +16,7 @@ public class OptiFineUtils {
             return DownloadUtils.downloadStringCached("https://optifine.net/downloads",
                     "of_downloads_page", new OptiFineScraper());
         }catch (DownloadUtils.ParseException e) {
-            e.printStackTrace();
+            android.util.Log.e("OptiFineUtils", "Failed to parse OptiFine version list", e);
             return null;
         }
     }
