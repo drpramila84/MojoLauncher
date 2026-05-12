@@ -72,7 +72,7 @@ public interface ControlInterface extends View.OnLongClickListener, GrabListener
 
     @Override
     default void onGrabState(boolean isGrabbing) {
-        if (getControlLayoutParent() != null && getControlLayoutParent().getModifiable()) return; // Disable when edited
+        if (getControlLayoutParent() == null || getControlLayoutParent().getModifiable()) return;
         setVisible(((getProperties().displayInGame && isGrabbing) || (getProperties().displayInMenu && !isGrabbing)) && getControlLayoutParent().areControlVisible());
     }
 
@@ -375,7 +375,7 @@ public interface ControlInterface extends View.OnLongClickListener, GrabListener
                         getControlLayoutParent().adaptPanelPosition();
                         snapAndAlign(
                                 MathUtils.clamp(event.getRawX() - downX, 0, getControlLayoutParent().getWidth() - view.getWidth()),
-                                MathUtils.clamp(event.getRawY() - downY, 0, getControlLayoutParent().getWidth() - view.getHeight())
+                                MathUtils.clamp(event.getRawY() - downY, 0, getControlLayoutParent().getHeight() - view.getHeight())
                         );
                         break;
                     case MotionEvent.ACTION_UP:

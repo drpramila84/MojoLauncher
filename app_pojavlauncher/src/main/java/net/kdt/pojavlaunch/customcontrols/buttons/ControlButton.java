@@ -212,7 +212,7 @@ public class ControlButton extends TextView implements ControlInterface {
                 sendKeyPress(keycode, CallbackBridge.getCurrentMods(), isDown);
                 CallbackBridge.setModifiers(keycode, isDown);
             }else{
-                Log.i("punjabilauncher", "sendSpecialKey("+keycode+","+isDown+")");
+                Log.i("witherlauncher", "sendSpecialKey("+keycode+","+isDown+")");
                 sendSpecialKey(keycode, isDown);
             }
         }
