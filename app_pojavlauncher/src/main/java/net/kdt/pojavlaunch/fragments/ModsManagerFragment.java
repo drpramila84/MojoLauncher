@@ -375,16 +375,55 @@ public class ModsManagerFragment extends Fragment
     }
 
     /**
-     * Extracts a plain Minecraft version string (e.g. "1.21.1") from a raw versionId that may
-     * include a modloader prefix/suffix (e.g. "fabric-loader-0.18.5-1.21.1",
-     * "1.21.1-forge-47.3.0", "neoforge-21.1.0").
-     * Returns null if no recognisable MC version is found.
+     * Extracts a plain Minecraft version string from a raw versionId, handling every
+     * modloader format the launcher produces:
+     *
+     *   vanilla          : "1.21.1"                          → "1.21.1"
+     *   Fabric/Quilt     : "fabric-loader-0.19.2-1.21.11"   → "1.21.11"  (last segment)
+     *   Legacy Fabric    : "legacy-fabric-loader-0.12-1.16.5"→ "1.16.5"  (last segment)
+     *   Forge            : "1.21.1-forge-47.3.0"            → "1.21.1"   (before -forge-)
+     *   NeoForge         : "neoforge-21.1.8"                → "1.21.1"   (NeoForge scheme)
+     *
+     * Returns null if no recognisable MC version can be determined.
      */
     private static String extractMcVersion(String versionId) {
         if (versionId == null || versionId.isEmpty()) return null;
-        // Matches standard MC versions like "1.21", "1.21.1", "1.12.2", "24w14a" (snapshots)
+        String lower = versionId.toLowerCase(java.util.Locale.ROOT);
+
+        // fabric-loader-X.Y.Z-MC  /  quilt-loader-X.Y.Z-MC  /  legacy-fabric-loader-X.Y.Z-MC
+        // The MC version is always the LAST dash-delimited segment.
+        if (lower.contains("-loader-")) {
+            int lastDash = versionId.lastIndexOf('-');
+            if (lastDash >= 0 && lastDash < versionId.length() - 1) {
+                String candidate = versionId.substring(lastDash + 1);
+                if (candidate.matches("\\d+\\.\\d+(?:\\.\\d+)?")) return candidate;
+            }
+        }
+
+        // {mcVersion}-forge-{loaderVersion}  →  MC is everything before "-forge-"
+        if (lower.contains("-forge-")) {
+            String[] parts = versionId.split("-forge-", 2);
+            if (parts[0].matches("\\d+\\.\\d+(?:\\.\\d+)?")) return parts[0];
+        }
+
+        // neoforge-{loaderVersion}  where loaderVersion encodes MC as:
+        //   21.1.8 → 1.21.1  (trim leading minor, keep up to the second dot)
+        if (lower.startsWith("neoforge-")) {
+            String neoVer = versionId.substring("neoforge-".length());
+            int firstDot  = neoVer.indexOf('.');
+            int secondDot = firstDot >= 0 ? neoVer.indexOf('.', firstDot + 1) : -1;
+            if (firstDot >= 0 && secondDot >= 0) {
+                return "1." + neoVer.substring(0, secondDot);
+            }
+        }
+
+        // Vanilla plain version ("1.21.1", "1.12.2", etc.)
+        if (versionId.matches("\\d+\\.\\d+(?:\\.\\d+)?")) return versionId;
+
+        // Fallback: grab the first X.Y or X.Y.Z pattern
         Matcher m = Pattern.compile("(\\d+\\.\\d+(?:\\.\\d+)?)").matcher(versionId);
         if (m.find()) return m.group(1);
+
         return null;
     }
 
