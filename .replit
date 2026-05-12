@@ -9,3 +9,26 @@ channel = "stable-25_05"
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 30000
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Auto Push to GitHub"
+
+[[workflows.workflow]]
+name = "Auto Push to GitHub"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash autopush.sh"
+
+[workflows.workflow.metadata]
+outputType = "console"
