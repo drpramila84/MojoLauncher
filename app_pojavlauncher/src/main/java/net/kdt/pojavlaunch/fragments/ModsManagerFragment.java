@@ -94,13 +94,6 @@ public class ModsManagerFragment extends Fragment
             return;
         }
 
-        String versionId = instance.versionId;
-        if (versionId != null
-                && !Instance.VERSION_LATEST_RELEASE.equals(versionId)
-                && !Instance.VERSION_LATEST_SNAPSHOT.equals(versionId)) {
-            mSearchFilters.mcVersion = versionId;
-        }
-
         mModsDir = new File(instance.getGameDirectory(), "mods");
 
         ModInstallApi modInstallApi = new ModInstallApi(instance.getGameDirectory());
