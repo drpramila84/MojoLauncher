@@ -91,6 +91,21 @@ public class CurseforgeApi implements ModpackApi{
                     dataElement.get("name").getAsString(),
                     dataElement.get("summary").getAsString(),
                     dataElement.getAsJsonObject("logo").get("thumbnailUrl").getAsString());
+            // Parse supported loaders from latestFilesIndexes[].modLoader
+            JsonArray latestFilesIndexes = dataElement.getAsJsonArray("latestFilesIndexes");
+            if (latestFilesIndexes != null) {
+                java.util.LinkedHashSet<String> loaderSet = new java.util.LinkedHashSet<>();
+                for (JsonElement elem : latestFilesIndexes) {
+                    JsonObject idx = elem.getAsJsonObject();
+                    JsonElement mlElem = idx.get("modLoader");
+                    if (mlElem != null && !mlElem.isJsonNull()) {
+                        String slug = curseforgeModLoaderTypeToSlug(mlElem.getAsInt());
+                        if (slug != null) loaderSet.add(slug);
+                    }
+                }
+                if (!loaderSet.isEmpty())
+                    modItem.loaders = loaderSet.toArray(new String[0]);
+            }
             modItemList.add(modItem);
         }
         if(curseforgeSearchResult == null) curseforgeSearchResult = new CurseforgeSearchResult();
@@ -269,6 +284,20 @@ public class CurseforgeApi implements ModpackApi{
             }
         }
         return null;
+    }
+
+    /**
+     * Maps a CurseForge modLoaderType integer back to a loader slug for display.
+     * Returns null for unknown/unsupported types.
+     */
+    private static String curseforgeModLoaderTypeToSlug(int type) {
+        switch (type) {
+            case 1: return "forge";
+            case 4: return "fabric";
+            case 5: return "quilt";
+            case 6: return "neoforge";
+            default: return null;
+        }
     }
 
     /**

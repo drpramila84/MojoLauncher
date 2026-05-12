@@ -79,6 +79,20 @@ public class ModrinthApi implements ModpackApi{
                     hit.get("description").getAsString(),
                     hit.get("icon_url").getAsString()
             );
+            // Parse supported loaders from the categories array
+            JsonArray categories = hit.getAsJsonArray("categories");
+            if (categories != null) {
+                java.util.ArrayList<String> loaderList = new java.util.ArrayList<>();
+                for (com.google.gson.JsonElement cat : categories) {
+                    String slug = cat.getAsString();
+                    if ("fabric".equals(slug) || "forge".equals(slug)
+                            || "quilt".equals(slug) || "neoforge".equals(slug)) {
+                        loaderList.add(slug);
+                    }
+                }
+                if (!loaderList.isEmpty())
+                    items[i].loaders = loaderList.toArray(new String[0]);
+            }
         }
         if(modrinthSearchResult == null) modrinthSearchResult = new ModrinthSearchResult();
         modrinthSearchResult.previousOffset += responseHits.size();

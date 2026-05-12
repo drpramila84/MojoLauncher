@@ -8,6 +8,8 @@ public class ModItem extends ModSource {
     public String title;
     public String description;
     public String imageUrl;
+    /** Loader slugs this mod supports, e.g. {"fabric","quilt"}. May be null if unknown. */
+    public String[] loaders;
 
     public ModItem(int apiSource, boolean isModpack, String id, String title, String description, String imageUrl) {
         this.apiSource = apiSource;

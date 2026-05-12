@@ -35,6 +35,7 @@ import net.kdt.pojavlaunch.progresskeeper.TaskCountListener;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.Future;
@@ -153,6 +154,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private ModItem mModItem = null;
         private final TextView mTitle, mDescription;
         private final ImageView mIconView, mSourceView;
+        private final ImageView mLoaderFabric, mLoaderForge, mLoaderQuilt, mLoaderNeoForge;
         private View mExtendedLayout;
         private Spinner mExtendedSpinner;
         private Button mExtendedButton;
@@ -223,10 +225,14 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
 
             // Define click listener for the ViewHolder's View
-            mTitle = view.findViewById(R.id.mod_title_textview);
+            mTitle       = view.findViewById(R.id.mod_title_textview);
             mDescription = view.findViewById(R.id.mod_body_textview);
-            mIconView = view.findViewById(R.id.mod_thumbnail_imageview);
-            mSourceView = view.findViewById(R.id.mod_source_imageview);
+            mIconView    = view.findViewById(R.id.mod_thumbnail_imageview);
+            mSourceView  = view.findViewById(R.id.mod_source_imageview);
+            mLoaderFabric   = view.findViewById(R.id.mod_loader_fabric);
+            mLoaderForge    = view.findViewById(R.id.mod_loader_forge);
+            mLoaderQuilt    = view.findViewById(R.id.mod_loader_quilt);
+            mLoaderNeoForge = view.findViewById(R.id.mod_loader_neoforge);
         }
 
         /** Display basic info about the moditem */
@@ -261,6 +267,15 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             mSourceView.setImageResource(getSourceDrawable(item.apiSource));
             mTitle.setText(item.title);
             mDescription.setText(item.description);
+
+            // Show loader brand icons for each loader this mod supports
+            Set<String> loaderSet = (item.loaders != null)
+                    ? new HashSet<>(Arrays.asList(item.loaders))
+                    : Collections.emptySet();
+            mLoaderFabric.setVisibility(  loaderSet.contains("fabric")   ? View.VISIBLE : View.GONE);
+            mLoaderForge.setVisibility(   loaderSet.contains("forge")    ? View.VISIBLE : View.GONE);
+            mLoaderQuilt.setVisibility(   loaderSet.contains("quilt")    ? View.VISIBLE : View.GONE);
+            mLoaderNeoForge.setVisibility(loaderSet.contains("neoforge") ? View.VISIBLE : View.GONE);
 
             if(hasExtended()){
                 closeDetailedView();
