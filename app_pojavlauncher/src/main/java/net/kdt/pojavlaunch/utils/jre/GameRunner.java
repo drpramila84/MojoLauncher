@@ -222,6 +222,12 @@ public class GameRunner {
 
         List<String> javaArgList = new ArrayList<>();
 
+        // Fix multiplayer screen freeze on Android: Minecraft's LAN scanner uses MulticastSocket
+        // which does not properly wake up from a blocked receive() when closed on Android over IPv6.
+        // Forcing IPv4 ensures socket.close() reliably interrupts the scanner thread, preventing
+        // the game from freezing when navigating away from the multiplayer screen.
+        javaArgList.add("-Djava.net.preferIPv4Stack=true");
+
         if (versionInfo.logging != null && versionInfo.logging.client != null && versionInfo.logging.client.file != null) {
             String configFile = Tools.DIR_DATA + "/security/" + versionInfo.logging.client.file.id.replace("client", "log4j-rce-patch");
             if (!new File(configFile).exists()) {
