@@ -26,9 +26,9 @@ args = "Auto Push to GitHub"
 name = "Auto Push to GitHub"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "bash autopush.sh"
-
-[workflows.workflow.metadata]
-outputType = "console"
