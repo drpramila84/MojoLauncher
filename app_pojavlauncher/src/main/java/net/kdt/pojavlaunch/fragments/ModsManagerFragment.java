@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +63,7 @@ public class ModsManagerFragment extends Fragment
     private EditText mSearchEditText;
     private ImageButton mFilterButton;
     private ProgressBar mSearchProgressBar;
+    private TextView mVersionFilterChip;
 
     private RecyclerView mBrowseList;
     private TextView mBrowseStatusText;
@@ -109,6 +111,7 @@ public class ModsManagerFragment extends Fragment
         mSearchEditText    = view.findViewById(R.id.mods_search_edittext);
         mFilterButton      = view.findViewById(R.id.mods_filter_button);
         mSearchProgressBar = view.findViewById(R.id.mods_progressbar);
+        mVersionFilterChip = view.findViewById(R.id.mods_version_chip);
         mBrowseList        = view.findViewById(R.id.mods_list);
         mBrowseStatusText  = view.findViewById(R.id.mods_status_text);
         mInstalledList     = view.findViewById(R.id.mods_installed_list);
@@ -147,12 +150,16 @@ public class ModsManagerFragment extends Fragment
         });
 
         mFilterButton.setOnClickListener(v -> showFilterDialog());
+        mVersionFilterChip.setOnClickListener(v -> showFilterDialog());
 
         mBrowseTab.setOnClickListener(v -> switchTab(TAB_BROWSE));
         mInstalledTab.setOnClickListener(v -> switchTab(TAB_INSTALLED));
 
         applyTabStyle(TAB_BROWSE);
-        searchMods(null);
+        updateVersionChip();
+
+        // Show version prompt immediately — mods load only after user picks a version
+        showVersionPickerPrompt();
     }
 
     @Override
@@ -265,21 +272,60 @@ public class ModsManagerFragment extends Fragment
         mModItemAdapter.performSearchQuery(mSearchFilters);
     }
 
+    /**
+     * Opens the version picker immediately when the Browse tab loads.
+     * Mods are only fetched after the user selects a version, preventing
+     * incompatible mod installations.
+     */
+    private void showVersionPickerPrompt() {
+        mBrowseStatusText.setTextColor(mDefaultTextColor);
+        mBrowseStatusText.setText(R.string.mods_select_version_prompt);
+        mBrowseStatusText.setVisibility(View.VISIBLE);
+        VersionSelectorDialog.open(requireContext(), true, (version, snapshot) -> {
+            mSearchFilters.mcVersion = version;
+            updateVersionChip();
+            searchMods(mSearchEditText.getText().toString());
+        });
+    }
+
+    /** Updates the filter chip text to reflect the current version + loader selection. */
+    private void updateVersionChip() {
+        StringBuilder sb = new StringBuilder();
+        if (mSearchFilters.mcVersion != null && !mSearchFilters.mcVersion.isEmpty()) {
+            sb.append("MC ").append(mSearchFilters.mcVersion);
+        }
+        if (mSearchFilters.modLoader != null && !mSearchFilters.modLoader.isEmpty()) {
+            if (sb.length() > 0) sb.append("  ·  ");
+            String loader = mSearchFilters.modLoader;
+            sb.append(Character.toUpperCase(loader.charAt(0))).append(loader.substring(1));
+        }
+        if (sb.length() == 0) {
+            mVersionFilterChip.setText(R.string.mods_version_chip_hint);
+            mVersionFilterChip.setAlpha(0.55f);
+        } else {
+            mVersionFilterChip.setText(sb.toString());
+            mVersionFilterChip.setAlpha(1.0f);
+        }
+    }
+
     private void showFilterDialog() {
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(R.layout.dialog_mod_filters)
                 .create();
 
         dialog.setOnShowListener(di -> {
-            TextView selectedVersion = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
-            Button selectVersionBtn  = dialog.findViewById(R.id.search_mod_mc_version_button);
-            Button applyBtn          = dialog.findViewById(R.id.search_mod_apply_filters);
+            TextView selectedVersion  = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
+            Button selectVersionBtn   = dialog.findViewById(R.id.search_mod_mc_version_button);
+            Button applyBtn           = dialog.findViewById(R.id.search_mod_apply_filters);
+            RadioGroup loaderGroup    = dialog.findViewById(R.id.search_mod_loader_radio_group);
 
             assert selectedVersion != null;
             assert selectVersionBtn != null;
             assert applyBtn != null;
+            assert loaderGroup != null;
 
             selectedVersion.setText(mSearchFilters.mcVersion);
+            loaderGroup.check(loaderSlugToRadioId(mSearchFilters.modLoader));
 
             selectVersionBtn.setOnClickListener(v ->
                     VersionSelectorDialog.open(v.getContext(), true,
@@ -287,11 +333,32 @@ public class ModsManagerFragment extends Fragment
 
             applyBtn.setOnClickListener(v -> {
                 mSearchFilters.mcVersion = selectedVersion.getText().toString();
+                mSearchFilters.modLoader = radioIdToLoaderSlug(loaderGroup.getCheckedRadioButtonId());
+                updateVersionChip();
                 searchMods(mSearchEditText.getText().toString());
                 di.dismiss();
             });
         });
 
         dialog.show();
+    }
+
+    private int loaderSlugToRadioId(String slug) {
+        if (slug == null) return R.id.search_mod_loader_any;
+        switch (slug) {
+            case "fabric":   return R.id.search_mod_loader_fabric;
+            case "forge":    return R.id.search_mod_loader_forge;
+            case "quilt":    return R.id.search_mod_loader_quilt;
+            case "neoforge": return R.id.search_mod_loader_neoforge;
+            default:         return R.id.search_mod_loader_any;
+        }
+    }
+
+    private String radioIdToLoaderSlug(int radioId) {
+        if (radioId == R.id.search_mod_loader_fabric)   return "fabric";
+        if (radioId == R.id.search_mod_loader_forge)    return "forge";
+        if (radioId == R.id.search_mod_loader_quilt)    return "quilt";
+        if (radioId == R.id.search_mod_loader_neoforge) return "neoforge";
+        return null;
     }
 }

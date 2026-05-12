@@ -534,6 +534,8 @@
     <string name="mods_search_hint">Search mods on Modrinth…</string>
     <string name="mods_install_success">Mod installed successfully!</string>
     <string name="mod_install_downloading">Downloading mod…</string>
+    <string name="mods_select_version_prompt">Select a Minecraft version to browse mods</string>
+    <string name="mods_version_chip_hint">No version selected — tap filter to choose</string>
     <string name="mods_search_no_result">No mods found</string>
     <string name="mods_search_error">Failed to search mods</string>
     <string name="mods_tab_browse">Browse</string>
