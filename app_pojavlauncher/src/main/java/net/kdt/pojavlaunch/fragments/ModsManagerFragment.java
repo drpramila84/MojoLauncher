@@ -15,9 +15,12 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.math.MathUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -337,8 +340,8 @@ public class ModsManagerFragment extends Fragment
     }
 
     /**
-     * Updates the version button text and plays a smooth scale + fade pop-in so the
-     * user clearly sees the filter has changed.
+     * Updates the version button text + loader icon and plays a smooth scale + fade
+     * pop-in so the user clearly sees the filter has changed.
      */
     private void updateVersionChip() {
         StringBuilder sb = new StringBuilder();
@@ -352,13 +355,10 @@ public class ModsManagerFragment extends Fragment
         }
 
         final boolean hasVersion = sb.length() > 0;
-        if (hasVersion) {
-            // Append a subtle "tap to change" hint so the user knows it's interactive
-            sb.append("   ▸");
-            mVersionFilterChip.setText(sb.toString());
-        } else {
-            mVersionFilterChip.setText(R.string.mods_version_chip_hint);
-        }
+        mVersionFilterChip.setText(hasVersion ? sb.toString() : getString(R.string.mods_version_chip_hint));
+
+        // Set loader icon on the left; edit icon on the right
+        setChipDrawables(mSearchFilters.modLoader, hasVersion);
 
         // Cancel any running animator then pop in with scale + fade
         mVersionFilterChip.animate().cancel();
@@ -371,6 +371,41 @@ public class ModsManagerFragment extends Fragment
                 .setDuration(300)
                 .setInterpolator(new OvershootInterpolator(1.4f))
                 .start();
+    }
+
+    /**
+     * Sets the compound drawables on the version button:
+     *   left  — loader brand icon (Fabric / Forge / Quilt / NeoForge / generic hash for vanilla)
+     *   right — small edit icon when a version is set (indicates the button is tappable)
+     */
+    private void setChipDrawables(String loaderSlug, boolean hasVersion) {
+        float density   = getResources().getDisplayMetrics().density;
+        int   iconSize  = Math.round(20 * density);   // 20 dp — left loader icon
+        int   editSize  = Math.round(14 * density);   // 14 dp — right edit hint
+
+        Drawable leftIcon = AppCompatResources.getDrawable(requireContext(),
+                loaderSlugToIconRes(loaderSlug));
+        if (leftIcon != null) leftIcon.setBounds(0, 0, iconSize, iconSize);
+
+        Drawable rightIcon = null;
+        if (hasVersion) {
+            rightIcon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_px_edit);
+            if (rightIcon != null) rightIcon.setBounds(0, 0, editSize, editSize);
+        }
+
+        mVersionFilterChip.setCompoundDrawablesRelative(leftIcon, null, rightIcon, null);
+    }
+
+    /** Maps a loader slug to its brand icon resource. */
+    private static int loaderSlugToIconRes(String slug) {
+        if (slug == null) return R.drawable.ic_px_hash;
+        switch (slug) {
+            case "fabric":   return R.drawable.ic_fabric;
+            case "forge":    return R.drawable.ic_forge;
+            case "quilt":    return R.drawable.ic_quilt;
+            case "neoforge": return R.drawable.ic_neoforge;
+            default:         return R.drawable.ic_px_hash;
+        }
     }
 
     private void showFilterDialog() {
