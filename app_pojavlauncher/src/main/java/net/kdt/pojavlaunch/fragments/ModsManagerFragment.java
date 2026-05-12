@@ -34,6 +34,8 @@ import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ModsManagerFragment extends Fragment
         implements ModItemAdapter.SearchResultCallback, InstalledModAdapter.DeleteListener {
@@ -156,10 +158,20 @@ public class ModsManagerFragment extends Fragment
         mInstalledTab.setOnClickListener(v -> switchTab(TAB_INSTALLED));
 
         applyTabStyle(TAB_BROWSE);
-        updateVersionChip();
 
-        // Show version prompt immediately — mods load only after user picks a version
-        showVersionPickerPrompt();
+        // Auto-detect MC version (and loader) from the instance's versionId so the
+        // user does not have to pick it manually. Fall back to the picker if unknown.
+        String detectedMcVersion = extractMcVersion(instance.versionId);
+        if (detectedMcVersion != null) {
+            mSearchFilters.mcVersion = detectedMcVersion;
+            String detectedLoader = extractLoader(instance.versionId);
+            if (detectedLoader != null) mSearchFilters.modLoader = detectedLoader;
+            updateVersionChip();
+            searchMods(null);
+        } else {
+            updateVersionChip();
+            showVersionPickerPrompt();
+        }
     }
 
     @Override
@@ -359,6 +371,34 @@ public class ModsManagerFragment extends Fragment
         if (radioId == R.id.search_mod_loader_forge)    return "forge";
         if (radioId == R.id.search_mod_loader_quilt)    return "quilt";
         if (radioId == R.id.search_mod_loader_neoforge) return "neoforge";
+        return null;
+    }
+
+    /**
+     * Extracts a plain Minecraft version string (e.g. "1.21.1") from a raw versionId that may
+     * include a modloader prefix/suffix (e.g. "fabric-loader-0.18.5-1.21.1",
+     * "1.21.1-forge-47.3.0", "neoforge-21.1.0").
+     * Returns null if no recognisable MC version is found.
+     */
+    private static String extractMcVersion(String versionId) {
+        if (versionId == null || versionId.isEmpty()) return null;
+        // Matches standard MC versions like "1.21", "1.21.1", "1.12.2", "24w14a" (snapshots)
+        Matcher m = Pattern.compile("(\\d+\\.\\d+(?:\\.\\d+)?)").matcher(versionId);
+        if (m.find()) return m.group(1);
+        return null;
+    }
+
+    /**
+     * Detects the modloader slug from a raw versionId string.
+     * Returns "fabric", "forge", "quilt", "neoforge", or null for vanilla.
+     */
+    private static String extractLoader(String versionId) {
+        if (versionId == null) return null;
+        String lower = versionId.toLowerCase(java.util.Locale.ROOT);
+        if (lower.contains("neoforge")) return "neoforge";
+        if (lower.contains("forge"))    return "forge";
+        if (lower.contains("fabric"))   return "fabric";
+        if (lower.contains("quilt"))    return "quilt";
         return null;
     }
 }
