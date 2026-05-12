@@ -530,4 +530,13 @@
     <string name="mod_install_downloading">Downloading mod…</string>
     <string name="mods_search_no_result">No mods found</string>
     <string name="mods_search_error">Failed to search mods</string>
+    <string name="mods_tab_browse">Browse</string>
+    <string name="mods_tab_installed">Installed</string>
+    <string name="mods_installed_empty">No mods installed in this instance yet.\nInstall some from the Browse tab!</string>
+    <string name="mods_delete_confirm_title">Delete mod?</string>
+    <string name="mods_delete_confirm_message">Are you sure you want to delete %s? This cannot be undone.</string>
+    <string name="mods_delete_failed">Failed to delete mod</string>
+    <string name="mods_toggle_failed">Failed to toggle mod — check storage permission</string>
+    <string name="mods_enabled">Enabled</string>
+    <string name="mods_disabled">Disabled</string>
 </resources>

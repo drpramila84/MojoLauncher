@@ -8,7 +8,9 @@
     android:background="@color/background_app"
     android:paddingHorizontal="@dimen/fragment_padding_medium">
 
-    <!-- Floating header overlay: instance title + search bar -->
+    <!-- ══════════════════════════════════════════
+         Floating header overlay (scrolls with list)
+         ══════════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mods_overlay"
         android:layout_width="match_parent"
@@ -16,7 +18,8 @@
         android:translationZ="10dp"
         android:background="@drawable/background_overlay"
         android:paddingHorizontal="@dimen/padding_medium"
-        android:paddingVertical="@dimen/padding_medium"
+        android:paddingTop="@dimen/padding_moderate"
+        android:paddingBottom="@dimen/padding_small"
         android:layout_marginTop="@dimen/fragment_padding_medium"
         android:layout_marginHorizontal="@dimen/fragment_padding_medium"
         app:layout_constraintTop_toTopOf="parent"
@@ -32,12 +35,50 @@
             android:textSize="@dimen/_13ssp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingBottom="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="Mods — My Instance" />
+            tools:text="Mods — My Instance (1.20.1)" />
 
-        <!-- Search field -->
+        <!-- Tab row: Browse | Installed -->
+        <LinearLayout
+            android:id="@+id/mods_tab_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/padding_small"
+            app:layout_constraintTop_toBottomOf="@id/mods_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/mods_tab_browse"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/mods_tab_browse"
+                android:textAllCaps="false" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/listDivider" />
+
+            <Button
+                android:id="@+id/mods_tab_installed"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/_12ssp"
+                android:text="@string/mods_tab_installed"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+        <!-- Search field (Browse tab only) -->
         <EditText
             android:id="@+id/mods_search_edittext"
             android:layout_width="0dp"
@@ -49,11 +90,11 @@
             android:hint="@string/mods_search_hint"
             android:inputType="textPersonName"
             android:paddingHorizontal="@dimen/padding_heavy"
-            app:layout_constraintTop_toBottomOf="@id/mods_title"
+            app:layout_constraintTop_toBottomOf="@id/mods_tab_row"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/mods_filter_button" />
 
-        <!-- Filter button -->
+        <!-- Filter button (Browse tab only) -->
         <ImageButton
             android:id="@+id/mods_filter_button"
             android:layout_width="wrap_content"
@@ -66,7 +107,7 @@
             app:layout_constraintTop_toTopOf="@id/mods_search_edittext"
             app:layout_constraintBottom_toBottomOf="@id/mods_search_edittext" />
 
-        <!-- Indeterminate progress bar shown while searching -->
+        <!-- Indeterminate search progress (Browse tab only) -->
         <ProgressBar
             android:id="@+id/mods_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -79,7 +120,9 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Mod results list -->
+    <!-- ══════════════════════════════════════════
+         Browse tab — Modrinth search results
+         ══════════════════════════════════════════ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mods_list"
         android:layout_width="match_parent"
@@ -90,17 +133,47 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Status message (no results / error) -->
+    <!-- Browse tab — status text (no results / error) -->
     <TextView
         android:id="@+id/mods_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/mods_list"
         app:layout_constraintBottom_toBottomOf="@id/mods_list"
         app:layout_constraintStart_toStartOf="@id/mods_list"
         app:layout_constraintEnd_toEndOf="@id/mods_list"
         tools:text="No mods found"
+        tools:visibility="visible" />
+
+    <!-- ══════════════════════════════════════════
+         Installed tab — list of .jar / .jar.disabled files
+         ══════════════════════════════════════════ -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mods_installed_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="@dimen/_15sdp"
+        android:clipToPadding="false"
+        android:layout_marginBottom="@dimen/padding_moderate"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible" />
+
+    <!-- Installed tab — empty state -->
+    <TextView
+        android:id="@+id/mods_installed_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/mods_installed_empty"
+        app:layout_constraintTop_toTopOf="@id/mods_installed_list"
+        app:layout_constraintBottom_toBottomOf="@id/mods_installed_list"
+        app:layout_constraintStart_toStartOf="@id/mods_installed_list"
+        app:layout_constraintEnd_toEndOf="@id/mods_installed_list"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
